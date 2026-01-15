@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Babaváró buli</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --bg: linear-gradient(135deg, #f6d6e6, #dfe8fb);
+  --card: linear-gradient(180deg, rgba(255,245,250,.95), rgba(245,250,255,.95));
+  --text: #3a3a3a;
+  --muted: #7f8899;
+  --pink: #f2a6cd;
+  --blue: #9bbaf3;
+  --border: rgba(0,0,0,.06);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+}
+
+/* ===== STAGE ===== */
+.stage {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
+/* ===== MEGHÍVÓ ===== */
+.invite-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 90vh;
+  max-width: 38vw;
+  border-radius: 28px;
+  box-shadow: 0 30px 70px rgba(140,160,220,.35);
+  z-index: 2;
+}
+
+/* ===== OLDALSÓ CSOPORTOK ===== */
+.tiles {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 320px;
+  z-index: 1;
+}
+
+.tiles.left {
+  left: 4%;
+}
+
+.tiles.right {
+  right: 4%;
+}
+
+/* ===== INFO BOX ===== */
+.info-box {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(140,160,220,.2);
+}
+
+/* ===== KIEMELT IDŐPONT ===== */
+.info-box.lock {
+  background: linear-gradient(135deg, #fde7f3, #e8efff);
+  border: none;
+}
+
+.lock .label {
+  display: inline-block;
+  font-size: 14px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #f2a6cd, #9bbaf3);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.lock .date {
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #3a3a3a;
+  margin-bottom: 6px;
+}
+
+.lock .day {
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.15;
+  color: #3a3a3a;
+  margin-bottom: 10px;
+}
+
+.lock .time {
+  font-size: 22px;
+  font-weight: 600;
+  color: #6b7fd7;
+}
+
+
+/* ===== TÉRKÉP ===== */
+.map-embed {
+  display: block;
+  position: relative;
+  height: 160px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin: 8px 0;
+}
+
+.map-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+
+.map-embed::after {
+  content: "Megnyitás térképen →";
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  background: rgba(255,255,255,.85);
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  color: #555;
+}
+
+/* ===== AJÁNDÉK ===== */
+.gift-card p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 8px 0;
+}
+
+.gift-btn, .kelengye-btn {
+  display: block;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 18px;
+  text-decoration: none;
+  color: white;
+  margin: 6px auto;
+  transition: transform .15s ease, opacity .2s ease;
+}
+
+.gift-btn {
+  background: linear-gradient(135deg, var(--pink), var(--blue));
+}
+
+.kelengye-btn {
+  background: linear-gradient(135deg, var(--blue), var(--pink));
+}
+
+.gift-btn:hover,
+.kelengye-btn:hover {
+  transform: translateY(-2px);
+  opacity: .95;
+}
+
+/* ===== QR ===== */
+.qr-wrapper {
+  background: white;
+  padding: 12px;
+  border-radius: 18px;
+  width: fit-content;
+  margin: 10px auto;
+}
+
+/* ===== MOBIL ===== */
+@media (max-width: 1024px) {
+  .stage {
+    padding: 20px;
+  }
+
+  .invite-image {
+    position: static;
+    transform: none;
+    max-width: 100%;
+    margin: 20px auto;
+    display: block;
+  }
+
+  .tiles {
+    position: static;
+    transform: none;
+    max-width: 100%;
+    margin-bottom: 16px;
+  }
+}
+/* ===== RSVP / VISSZAJELZÉS ===== */
+.rsvp-box {
+  background: linear-gradient(135deg, #f2a6cd, #9bbaf3);
+  color: white;
+  border-radius: 26px;
+  padding: 22px 20px;
+  text-align: center;
+  box-shadow: 0 25px 55px rgba(140,160,220,.45);
+}
+
+.rsvp-box h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.rsvp-box p {
+  font-size: 13px;
+  opacity: 0.95;
+  margin: 0 0 14px;
+}
+
+.rsvp-btn {
+  display: inline-block;
+  background: white;
+  color: #555;
+  padding: 12px 18px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+
+.rsvp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,.15);
+}
+
+/* ===== FORM BEÁGYAZÁS ===== */
+.form-embed {
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.form-embed iframe {
+  width: 100%;
+  height: 420px;
+  border: none;
+}
+/* ===== RSVP VÁLASZTÁS ===== */
+.rsvp-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.rsvp-choice {
+  border: none;
+  border-radius: 18px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s ease, opacity .2s ease;
+}
+
+.rsvp-choice.yes {
+  background: white;
+  color: #555;
+}
+
+.rsvp-choice.no {
+  background: rgba(255,255,255,.85);
+  color: #555;
+}
+
+.rsvp-choice:hover {
+  transform: translateY(-2px);
+  opacity: .95;
+}
+
+.rsvp-hint {
+  font-size: 11px;
+  opacity: .9;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  width: min(720px, 95%);
+  max-height: 90vh;
+  border-radius: 26px;
+  padding: 18px;
+  position: relative;
+}
+
+.modal-content iframe {
+  width: 100%;
+  height: 75vh;
+  border: none;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+
+</style>
+</head>
+
+
+<body>
+<div id="formModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeForm()">×</span>
+
+    <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLSfmKOaqdi262tHG_YPoY7pw0SgFQ1-2r9VykH-rPX-EgqCdlA/viewform?embedded=true"
+      loading="lazy">
+    </iframe>
+  </div>
+</div>
+<div class="stage">
+
+  <!-- MEGHÍVÓ -->
+  <img
+    class="invite-image"
+    src="https://lh3.googleusercontent.com/d/1ku-azygcNsXKm8cqRRwYOkES4UrhUR1G=w2000"
+    alt="Babaváró meghívó">
+
+  <!-- BAL OLDAL -->
+<div class="tiles left">
+
+  <div class="info-box rsvp-box">
+  <h3>📝 Visszajelzés</h3>
+  <p>Kérjük, jelezd mindenképpen, hogy tudsz-e jönni 💕</p>
+
+  <input
+    type="text"
+    id="guestName"
+    placeholder="Neved"
+    style="
+      width:100%;
+      padding:10px;
+      border-radius:16px;
+      border:none;
+      margin-bottom:10px;
+      text-align:center;
+    ">
+
+  <select
+    id="guestCount"
+    style="
+      width:100%;
+      padding:10px;
+      border-radius:16px;
+      border:none;
+      margin-bottom:14px;
+      text-align:center;
+    ">
+    <option value="">Hányan jöttök?</option>
+    <option value="1">1 fő</option>
+    <option value="2">2 fő</option>
+    <option value="3">3 fő</option>
+    <option value="4">4 fő</option>
+    <option value="5">5 fő</option>
+  </select>
+
+  <div class="rsvp-options">
+    <button class="rsvp-choice yes" onclick="sendRSVP('Igen, ott leszek')">
+      💕 Igen, ott leszek
+    </button>
+
+    <button class="rsvp-choice no" onclick="sendRSVP('Sajnos nem tudok jönni')">
+      😔 Sajnos nem tudok jönni
+    </button>
+  </div>
+
+  <small class="rsvp-hint">
+    A visszajelzés elküldése után automatikusan rögzítésre kerül 💖
+  </small>
+</div>
+
+
+
+  <div class="info-box lock">
+  <div class="label">IDŐPONT</div>
+  <div class="date">Február 8</div>
+  <div class="day">vasárnap</div>
+  <div class="time">14:00 – 19:00</div>
+</div>
+
+
+  
+
+</div>
+
+
+  <!-- JOBB OLDAL -->
+  <div class="tiles right">
+<div class="info-box location">
+    <span class="small">📍 Helyszín</span>
+    <a href="https://www.google.com/maps/search/?api=1&query=Kistelek, Kossuth utca 3"
+       target="_blank"
+       class="map-embed">
+      <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=20.01%2C46.47%2C20.05%2C46.49&layer=mapnik&marker=46.48%2C20.03"></iframe>
+    </a>
+    <strong>Kistelek, Kossuth utca 3</strong>
+  </div>
+    <div class="info-box gift-card">
+      <span>🎁 Ajándék & Babakelengye</span>
+      <p>Ha szeretnél valami kedveset hozni 💕</p>
+
+      <a href="https://www.brendon.hu/ajandekkartya"
+         target="_blank"
+         class="gift-btn">🎁 Ajándékkártya</a>
+
+      <a href="https://www.brendon.hu/babakelengye-lista"
+         target="_blank"
+         class="kelengye-btn">🍼 Babakelengye lista</a>
+    </div>
+
+    <div class="info-box">
+      <strong>📸 Fotók feltöltése</strong>
+      <div class="qr-wrapper">
+        <img
+  src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://drive.google.com/drive/folders/1GqX30b_iUwFbfJxgUVYb3Kf8_jzl1dNy"
+          width="140">
+      </div>
+      <p>Beolvas → Feltölt → ❤️</p>
+    </div>
+
+    
+  </div>
+
+</div>
+<script>
+function openForm() {
+  document.getElementById('formModal').style.display = 'flex';
+}
+
+function closeForm() {
+  document.getElementById('formModal').style.display = 'none';
+}
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmS1d3hdyAmfiFOuWIrE9_FZ136A-vVjiopDNUP_qgRbE4tcLSgw7EQLStz7LhtI3z/exec";
+
+function sendRSVP(valasz) {
+  const nev = document.getElementById("guestName").value.trim();
+  const hanyan = document.getElementById("guestCount").value;
+
+  if (!nev) {
+    alert("Kérjük, add meg a neved 💕");
+    return;
+  }
+
+  if (valasz === "Igen, ott leszek" && !hanyan) {
+    alert("Kérjük, válaszd ki, hányan jöttök 💕");
+    return;
+  }
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      nev: nev,
+      valasz: valasz,
+      hanyan: hanyan || "-"
+    })
+  });
+
+  alert("Köszönjük a visszajelzést 💖");
+
+  // mezők ürítése
+  document.getElementById("guestName").value = "";
+  document.getElementById("guestCount").value = "";
+}
+
+</script>
+
+</body>
+</html>
