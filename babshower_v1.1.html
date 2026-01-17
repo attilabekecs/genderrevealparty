@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Babaváró buli – Tippeld meg a baba nemét</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
+    height: 100vh;
+}
+
+/* ====== BELÉPŐ OLDAL ====== */
+#startScreen {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.start-box {
+    background: white;
+    padding: 50px;
+    border-radius: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.start-box input {
+    padding: 14px;
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    margin: 20px 0;
+}
+
+.start-box button {
+    padding: 14px 30px;
+    border: none;
+    border-radius: 20px;
+    background: #ff69b4;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.start-box button:hover {
+    opacity: 0.9;
+}
+
+/* ====== FŐ OLDAL ====== */
+.wrapper {
+    display: none;
+    grid-template-columns: 1fr 1.3fr 1fr;
+    gap: 30px;
+    width: 100vw;
+    height: 100vh;
+    padding: 30px;
+}
+
+.box {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    overflow-y: auto;
+}
+
+.center {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.balloons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+}
+
+.balloon {
+    width: 130px;
+    height: 170px;
+    border-radius: 50% 50% 45% 45%;
+    cursor: pointer;
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.balloon:hover { transform: scale(1.05); }
+
+.balloon::after {
+    content: "";
+    position: absolute;
+    bottom: -100px;
+    left: 50%;
+    width: 30px;
+    height: 100px;
+    transform: translateX(-50%);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='100'%3E%3Cpath d='M15 0 C5 18 25 36 15 54 C5 72 25 90 15 100' stroke='%23999' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+}
+
+.pink { background: radial-gradient(circle at 30% 30%, #fff, #ff69b4); }
+.blue { background: radial-gradient(circle at 30% 30%, #fff, #5dade2); }
+
+.pop {
+    animation: pop 0.4s forwards;
+}
+
+@keyframes pop {
+    to { transform: scale(2); opacity: 0; }
+}
+
+.counts {
+    display: flex;
+    justify-content: space-around;
+    margin-top: auto;
+}
+
+.count-number {
+    font-size: 48px;
+    font-weight: 800;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ====== BELÉPÉS ====== -->
+<div id="startScreen">
+    <div class="start-box">
+        <h1>🎉 Babaváró buli 🎉</h1>
+        <p>Add meg a neved a folytatáshoz</p>
+        <input type="text" id="startName" placeholder="Neved">
+        <button onclick="start()">Tovább</button>
+    </div>
+</div>
+
+<!-- ====== FŐ OLDAL ====== -->
+<div class="wrapper" id="mainScreen">
+
+    <div class="box">
+        <h2 style="color:#ff69b4">💗 Lány tippek</h2>
+        <ul id="girlList"></ul>
+    </div>
+
+    <div class="box center">
+        <h1>🎈 Tippeld meg a baba nemét 🎈</h1>
+
+        <div class="balloons">
+            <div class="balloon pink" onclick="vote('kislány', this)"></div>
+            <div class="balloon blue" onclick="vote('kisfiú', this)"></div>
+        </div>
+
+        <div class="counts">
+            <div>💗 <div class="count-number" id="girlCount">0</div></div>
+            <div>💙 <div class="count-number" id="boyCount">0</div></div>
+        </div>
+
+        <p id="message"></p>
+    </div>
+
+    <div class="box">
+        <h2 style="color:#5dade2">💙 Fiú tippek</h2>
+        <ul id="boyList"></ul>
+    </div>
+
+</div>
+
+<script>
+/* ====== KONFIG ====== */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhqq9jnyegUerIiE29E8NbfcgHGtURXEKM3PiYQ9Wv91h4-b11cTOiMrAgECrTS97pzg/exec";
+
+/* ====== ÁLLAPOT ====== */
+let userName = sessionStorage.getItem("babyName");
+let tips = [];
+let voted = false;
+
+/* ====== ELEMEK ====== */
+const startScreen = document.getElementById("startScreen");
+const mainScreen = document.getElementById("mainScreen");
+
+/* ====== SHEETS BETÖLTÉS ====== */
+function loadFromSheets() {
+    fetch(SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+            tips = data;
+            renderLists();
+        })
+        .catch(() => alert("Nem sikerült betölteni az adatokat 😢"));
+}
+
+/* ====== BELÉPÉS ====== */
+function start() {
+    const name = document.getElementById("startName").value.trim();
+    if (!name) return alert("Add meg a neved!");
+    sessionStorage.setItem("babyName", name);
+    userName = name;
+    startScreen.style.display = "none";
+    mainScreen.style.display = "grid";
+    loadFromSheets();
+}
+
+if (userName) {
+    startScreen.style.display = "none";
+    mainScreen.style.display = "grid";
+    loadFromSheets();
+}
+
+/* ====== LISTÁK ====== */
+function renderLists() {
+    const girlList = document.getElementById("girlList");
+    const boyList = document.getElementById("boyList");
+    girlList.innerHTML = "";
+    boyList.innerHTML = "";
+
+    tips.forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = t.name;
+        (t.choice === "kislány" ? girlList : boyList).appendChild(li);
+    });
+
+    document.getElementById("girlCount").innerText =
+        tips.filter(t => t.choice === "kislány").length;
+
+    document.getElementById("boyCount").innerText =
+        tips.filter(t => t.choice === "kisfiú").length;
+}
+
+/* ====== SZAVAZÁS ====== */
+function vote(choice, balloon) {
+    if (voted) return;
+    voted = true;
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ name: userName, choice }),
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(() => loadFromSheets());
+
+    balloon.classList.add("pop");
+    document.getElementById("message").innerText = `Köszönjük ${userName}! 🎉`;
+}
+</script>
+
+</body>
+</html>
