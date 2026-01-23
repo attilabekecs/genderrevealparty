@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Babaváró buli – Tippeld meg a baba nemét</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
+  height: 100vh;
+}
+
+/* BELÉPŐ */
+#startScreen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.start-box {
+  background: white;
+  padding: 50px;
+  border-radius: 30px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.2);
+  text-align: center;
+}
+
+.start-box input {
+  padding: 14px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  margin: 20px 0;
+}
+
+.start-box button {
+  padding: 14px 30px;
+  border: none;
+  border-radius: 20px;
+  background: #ff69b4;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* FŐ */
+.wrapper {
+  display: none;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  gap: 30px;
+  width: 100vw;
+  height: 100vh;
+  padding: 30px;
+}
+
+.box {
+  background: white;
+  border-radius: 30px;
+  padding: 30px;
+  box-shadow: 0 15px 40px rgba(0,0,0,.15);
+  transition: border .3s ease, background .3s ease;
+}
+
+.box.active-girl {
+  border: 4px solid #ff69b4;
+  background: #fff0f7;
+}
+
+.box.active-boy {
+  border: 4px solid #5dade2;
+  background: #eef6ff;
+}
+
+.center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.balloons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 30px;
+}
+
+/* LUFI */
+.balloon {
+  width: 130px;
+  height: 170px;
+  border-radius: 50% 50% 45% 45%;
+  cursor: pointer;
+  position: relative;
+  transition: transform .3s ease, opacity .3s ease;
+}
+
+.balloon:hover { transform: scale(1.05); }
+
+.balloon.disabled {
+  opacity: .35;
+  pointer-events: none;
+}
+
+.balloon::after {
+  content: "";
+  position: absolute;
+  bottom: -45px;
+  left: 50%;
+  width: 2px;
+  height: 45px;
+  background: #999;
+  transform: translateX(-50%);
+}
+
+.pink { background: #ff69b4; }
+.blue { background: #5dade2; }
+
+/* PUFF */
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+.pop {
+  animation: pop .4s forwards;
+}
+
+/* SZÁMLÁLÓ */
+.counts {
+  display: flex;
+  justify-content: space-around;
+  margin-top: auto;
+}
+
+.count-number {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+/* LISTÁK */
+ul { list-style: none; padding: 0; }
+li { padding: 8px 0; border-bottom: 1px solid #eee; }
+
+/* ÜZENET */
+#message {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+/* KONFETTI */
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.confetti span {
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  opacity: .8;
+  animation: fall 2.5s linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="confetti" class="confetti"></div>
+
+<!-- NÉV -->
+<div id="startScreen">
+  <div class="start-box">
+    <h1>🎉 Babaváró buli 🎉</h1>
+    <input id="startName" placeholder="Neved" autocomplete="off">
+    <button onclick="start()">Tovább</button>
+  </div>
+</div>
+
+<!-- FŐ -->
+<div class="wrapper" id="mainScreen">
+
+  <div class="box" id="girlBox">
+    <h2>💗 Lány tippek</h2>
+    <ul id="girlList"></ul>
+  </div>
+
+  <div class="box center">
+    <h1>Tippeld meg a baba nemét</h1>
+
+    <div class="balloons">
+      <div id="pinkBalloon" class="balloon pink" onclick="vote('kislány')"></div>
+      <div id="blueBalloon" class="balloon blue" onclick="vote('kisfiú')"></div>
+    </div>
+
+    <div class="counts">
+      <div>💗 <div id="girlCount" class="count-number">0</div></div>
+      <div>💙 <div id="boyCount" class="count-number">0</div></div>
+    </div>
+
+    <p id="message"></p>
+  </div>
+
+  <div class="box" id="boyBox">
+    <h2>💙 Fiú tippek</h2>
+    <ul id="boyList"></ul>
+  </div>
+
+</div>
+
+<script>
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbzfjRNQ_rsMM3Q8AndPY2Acbe0sV5L0yZGuCyaEUzGAyV2WSuA4tYK1Pn40fUbHvl3JyQ/exec";
+
+let userName = "";
+let voted = false;
+
+function start() {
+  const name = document.getElementById("startName").value.trim();
+  if (!name) return alert("Add meg a neved!");
+  userName = name;
+
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("mainScreen").style.display = "grid";
+  loadFromSheets();
+}
+
+function loadFromSheets() {
+  fetch(SCRIPT_URL)
+    .then(r => r.json())
+    .then(data => render(data));
+}
+
+function render(tips) {
+  const g = document.getElementById("girlList");
+  const b = document.getElementById("boyList");
+  g.innerHTML = b.innerHTML = "";
+
+  tips.forEach(t => {
+    const li = document.createElement("li");
+    li.textContent = t.name;
+    (t.choice === "kislány" ? g : b).appendChild(li);
+  });
+
+  document.getElementById("girlCount").innerText =
+    tips.filter(t => t.choice === "kislány").length;
+  document.getElementById("boyCount").innerText =
+    tips.filter(t => t.choice === "kisfiú").length;
+}
+
+function launchConfetti() {
+  const box = document.getElementById("confetti");
+  box.innerHTML = "";
+
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement("span");
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background =
+      Math.random() > 0.5 ? "#ff69b4" : "#5dade2";
+    c.style.animationDelay = Math.random() + "s";
+    box.appendChild(c);
+  }
+}
+
+function vote(choice) {
+  if (voted) return;
+  voted = true;
+
+  const pink = document.getElementById("pinkBalloon");
+  const blue = document.getElementById("blueBalloon");
+  const girlBox = document.getElementById("girlBox");
+  const boyBox = document.getElementById("boyBox");
+
+  launchConfetti();
+
+  if (choice === "kislány") {
+    pink.classList.add("pop");
+    blue.classList.add("disabled");
+    girlBox.classList.add("active-girl");
+    document.getElementById("message").innerText =
+      "💗 Kislányra szavaztál 💗";
+  } else {
+    blue.classList.add("pop");
+    pink.classList.add("disabled");
+    boyBox.classList.add("active-boy");
+    document.getElementById("message").innerText =
+      "💙 Kisfiúra szavaztál 💙";
+  }
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: userName, choice })
+  }).then(() => loadFromSheets());
+}
+</script>
+
+</body>
+</html>
