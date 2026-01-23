@@ -115,6 +115,25 @@ canvas {
         height: auto;
     }
 }
+    .counts {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 18px;
+}
+
+.count {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.pink-text {
+    color: #ff69b4;
+}
+
+.blue-text {
+    color: #5dade2;
+}
+
 </style>
 </head>
 
@@ -141,6 +160,15 @@ canvas {
             <div class="balloon pink" onclick="vote('kislány', this)"></div>
             <div class="balloon blue" onclick="vote('kisfiú', this)"></div>
         </div>
+        <div class="counts">
+  <div class="count pink-text">
+    💗 <span id="girlCount">0</span>
+  </div>
+  <div class="count blue-text">
+    💙 <span id="boyCount">0</span>
+  </div>
+</div>
+
 
         <p id="message"></p>
     </div>
@@ -200,13 +228,26 @@ function renderLists() {
             girl.innerHTML = "";
             boy.innerHTML = "";
 
-            tips.forEach(t => {
-                const li = document.createElement("li");
-                li.textContent = t.name;
-                t.choice === "kislány"
-                    ? girl.appendChild(li)
-                    : boy.appendChild(li);
-            });
+            let girlCounter = 0;
+let boyCounter = 0;
+
+tips.forEach(t => {
+    const li = document.createElement("li");
+    li.textContent = t.name;
+
+    if (t.choice === "kislány") {
+        girl.appendChild(li);
+        girlCounter++;
+    } else if (t.choice === "kisfiú") {
+        boy.appendChild(li);
+        boyCounter++;
+    }
+});
+
+// számlálók frissítése
+document.getElementById("girlCount").innerText = girlCounter;
+document.getElementById("boyCount").innerText = boyCounter;
+
         });
 }
 
