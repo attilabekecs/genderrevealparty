@@ -106,14 +106,16 @@ li { padding: 8px 0; border-bottom: 1px solid #eee; }
 
 <body>
 
+<!-- NÉV BEKÉRÉS -->
 <div id="startScreen">
   <div class="start-box">
     <h1>🎉 Babaváró buli 🎉</h1>
-    <input id="startName" placeholder="Neved">
+    <input id="startName" placeholder="Neved" autocomplete="off">
     <button type="button" onclick="start()">Tovább</button>
   </div>
 </div>
 
+<!-- FŐ OLDAL -->
 <div class="wrapper" id="mainScreen">
 
   <div class="box">
@@ -148,38 +150,34 @@ li { padding: 8px 0; border-bottom: 1px solid #eee; }
 const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbzfjRNQ_rsMM3Q8AndPY2Acbe0sV5L0yZGuCyaEUzGAyV2WSuA4tYK1Pn40fUbHvl3JyQ/exec";
 
-
-let userName = sessionStorage.getItem("babyName");
+let userName = "";
 let voted = false;
 
 function start() {
   const name = document.getElementById("startName").value.trim();
   if (!name) return alert("Add meg a neved!");
-  sessionStorage.setItem("babyName", name);
-  userName = name;
-  document.getElementById("startScreen").style.display = "none";
-  document.getElementById("mainScreen").style.display = "grid";
-  loadFromSheets();
-}
 
-if (userName) {
+  userName = name;
+  voted = false;
+
   document.getElementById("startScreen").style.display = "none";
   document.getElementById("mainScreen").style.display = "grid";
+
   loadFromSheets();
 }
 
 function loadFromSheets() {
   fetch(SCRIPT_URL)
     .then(r => r.json())
-    .then(data => {
-      render(data);
-    });
+    .then(data => render(data));
 }
 
 function render(tips) {
   const g = document.getElementById("girlList");
   const b = document.getElementById("boyList");
-  g.innerHTML = b.innerHTML = "";
+
+  g.innerHTML = "";
+  b.innerHTML = "";
 
   tips.forEach(t => {
     const li = document.createElement("li");
@@ -189,6 +187,7 @@ function render(tips) {
 
   document.getElementById("girlCount").innerText =
     tips.filter(t => t.choice === "kislány").length;
+
   document.getElementById("boyCount").innerText =
     tips.filter(t => t.choice === "kisfiú").length;
 }
@@ -201,8 +200,7 @@ function vote(choice) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name: userName, choice })
-  })
-  .then(() => loadFromSheets());
+  }).then(() => loadFromSheets());
 
   document.getElementById("message").innerText =
     `Köszönjük ${userName}! 🎉`;
