@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Mikor születik a baba?</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #ffe4ef, #e4f0ff);
+    min-height: 100vh;
+    padding: 30px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    background: white;
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+h1, p {
+    text-align: center;
+    margin-top: 0;
+}
+
+/* INPUT */
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: center;
+    margin: 30px 0;
+}
+
+input[type="text"] {
+    padding: 14px;
+    width: 260px;
+    border-radius: 14px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+/* SLIDER */
+.slider-wrap {
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 18px;
+    border-radius: 999px;
+    background: linear-gradient(to right, #f7b6d8, #b6cfff);
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #333;
+}
+
+.date-preview {
+    margin-top: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #444;
+}
+
+/* NAPSZAK */
+.times {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.time {
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.time.active {
+    background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
+    border-color: transparent;
+}
+
+/* GOMB */
+button {
+    padding: 14px 34px;
+    border-radius: 999px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff9bd0, #7fbce8);
+    color: white;
+}
+
+/* ===== BUBORÉK GRID ===== */
+.bubbles {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 24px;
+    justify-items: center;
+}
+
+/* ===== BUBORÉK ===== */
+.bubble {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 12px;
+    text-align: center;
+    font-size: 12px;
+}
+
+/* NÉV – TÖBB SOR */
+.bubble .name {
+    font-weight: 600;
+    margin-bottom: 6px;
+    line-height: 1.2;
+
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+/* DÁTUM */
+.bubble .date {
+    font-size: 11px;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+/* NAPSZAK */
+.bubble .time {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.15);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>👶 Mikor születik a baba?</h1>
+    <p>Állítsd be a tipped, majd küldd el!</p>
+
+    <div class="inputs">
+        <input type="text" id="name" placeholder="Neved">
+
+        <div class="slider-wrap">
+            <input type="range" id="slider">
+            <div class="date-preview" id="datePreview"></div>
+        </div>
+
+        <div class="times">
+            <div class="time" data-time="Hajnal">🌅 Hajnal</div>
+            <div class="time" data-time="Reggel">☀️ Reggel</div>
+            <div class="time" data-time="Délután">🌤 Délután</div>
+            <div class="time" data-time="Este">🌙 Este</div>
+            <div class="time" data-time="Éjszaka">🌌 Éjszaka</div>
+        </div>
+
+        <button id="submit">Elküldöm a tippet</button>
+    </div>
+
+    <div class="bubbles" id="bubbleList"></div>
+</div>
+
+<script>
+const slider = document.getElementById("slider");
+const datePreview = document.getElementById("datePreview");
+const bubbleList = document.getElementById("bubbleList");
+
+const year = new Date().getFullYear();
+const startDate = new Date(year, 4, 1); // május 1
+const endDate   = new Date(year, 5, 30); // június 30
+const totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+
+slider.min = 0;
+slider.max = totalDays;
+slider.value = Math.floor(totalDays / 2);
+
+let selectedTime = null;
+let tips = JSON.parse(localStorage.getItem("birthTips")) || [];
+
+/* DÁTUM PREVIEW */
+function updateDatePreview() {
+    const d = new Date(startDate);
+    d.setDate(startDate.getDate() + Number(slider.value));
+    datePreview.innerText = d.toLocaleDateString("hu-HU");
+}
+slider.oninput = updateDatePreview;
+updateDatePreview();
+
+/* NAPSZAK */
+document.querySelectorAll(".time").forEach(t => {
+    t.onclick = () => {
+        document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
+        t.classList.add("active");
+        selectedTime = t.dataset.time;
+    };
+});
+
+/* RENDER – IDŐREND */
+function render() {
+    bubbleList.innerHTML = "";
+
+    tips
+        .filter(t => typeof t.rawDate === "number")
+        .sort((a, b) => a.rawDate - b.rawDate)
+        .forEach(t => {
+            const b = document.createElement("div");
+            b.className = "bubble";
+            b.innerHTML = `
+                <div class="name">${t.name}</div>
+                <div class="date">${t.dateText}</div>
+                <div class="time">${t.time}</div>
+            `;
+            bubbleList.appendChild(b);
+        });
+}
+
+/* ELKÜLD */
+document.getElementById("submit").onclick = () => {
+    const name = document.getElementById("name").value.trim();
+    if (!name || !selectedTime) {
+        alert("Add meg a neved és napszakot!");
+        return;
+    }
+
+    const d = new Date(startDate);
+    d.setDate(startDate.getDate() + Number(slider.value));
+
+    tips.push({
+        name,
+        rawDate: d.getTime(),
+        dateText: d.toLocaleDateString("hu-HU"),
+        time: selectedTime
+    });
+
+    localStorage.setItem("birthTips", JSON.stringify(tips));
+
+    document.getElementById("name").value = "";
+    document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
+    selectedTime = null;
+
+    render();
+};
+
+render();
+</script>
+
+</body>
+</html>
