@@ -178,17 +178,24 @@ document.getElementById("submit").onclick = () => {
   d.setDate(startDate.getDate() + Number(slider.value));
 
   fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({
-      id: id,
-      date: d.toLocaleDateString("hu-HU"),
-      time: selectedTime
-    })
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    id: id,
+    date: dateText,
+    time: selectedTime
   })
-  .then(() => alert("A tipped elküldve! 😊"))
-  .catch(() => alert("Hiba történt a mentésnél 😕"));
-};
+})
+.then(r => r.json())
+.then(() => {
+  alert("A tipped elküldve! 😊");
+})
+.catch(() => {
+  alert("Hiba történt a mentésnél 😕");
+});
+
 </script>
 
 </body>
