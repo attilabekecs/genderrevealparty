@@ -123,26 +123,26 @@ button {
 </div>
 
 <script>
-/* ===== TIMESTAMP URL-BŐL ===== */
+/* ===== ID AZ URL-BŐL ===== */
 const params = new URLSearchParams(window.location.search);
-const timestamp = params.get("ts");
+const id = params.get("id");
 
-if (!timestamp) {
-    alert("Hiányzó azonosító. Kérlek az első oldalon kezdj!");
+if (!id) {
+  alert("Hiányzó azonosító. Kérlek az első oldalon kezdj!");
 }
 
-/* ===== GOOGLE APPS SCRIPT URL ===== */
+/* ===== APPS SCRIPT URL ===== */
 const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbwHY0UDn5wO3TIu3vZNJh_eC4kG5TWDNzi2KjgQiHFT1U3k-SaxksgG6YB_OyMy7z_S/exec";
 
-/* ===== SLIDER LOGIKA ===== */
+/* ===== SLIDER ===== */
 const slider = document.getElementById("slider");
 const datePreview = document.getElementById("datePreview");
 
 const year = new Date().getFullYear();
-const startDate = new Date(year, 4, 1); // május 1
-const endDate   = new Date(year, 5, 30); // június 30
-const totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+const startDate = new Date(year, 4, 1);
+const endDate   = new Date(year, 5, 30);
+const totalDays = Math.round((endDate - startDate) / 86400000);
 
 slider.min = 0;
 slider.max = totalDays;
@@ -169,27 +169,25 @@ document.querySelectorAll(".time").forEach(t => {
 
 /* ===== KÜLDÉS ===== */
 document.getElementById("submit").onclick = () => {
-    if (!selectedTime) {
-        alert("Válassz napszakot!");
-        return;
-    }
+  if (!selectedTime) {
+    alert("Válassz napszakot!");
+    return;
+  }
 
-    const d = new Date(startDate);
-    d.setDate(startDate.getDate() + Number(slider.value));
-    const dateText = d.toLocaleDateString("hu-HU");
+  const d = new Date(startDate);
+  d.setDate(startDate.getDate() + Number(slider.value));
 
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            timestamp: Number(timestamp),
-            date: dateText,
-            time: selectedTime
-        })
-    });
-
-    alert("A tipped elküldve! 😊");
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({
+      id: id,
+      date: d.toLocaleDateString("hu-HU"),
+      time: selectedTime
+    })
+  })
+  .then(() => alert("A tipped elküldve! 😊"))
+  .catch(() => alert("Hiba történt a mentésnél 😕"));
 };
 </script>
 
