@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Mire nem lesz idejük a szülőknek?</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #ffe4ef, #e4f0ff);
+    min-height: 100vh;
+    padding: 30px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    background: white;
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+h1, p {
+    text-align: center;
+    margin-top: 0;
+}
+
+/* KÁRTYÁK */
+.cards {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+}
+
+.card {
+    background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
+    border-radius: 28px;
+    padding: 26px 20px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+}
+
+.emoji {
+    font-size: 34px;
+    margin-bottom: 10px;
+}
+
+.label {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.result {
+    font-size: 14px;
+    color: #444;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>😂 Mire nem lesz idejük a szülőknek?</h1>
+    <p>Kattints arra, ami szerinted biztosan háttérbe szorul!</p>
+
+    <div class="cards" id="cards"></div>
+</div>
+
+<script>
+const cardsData = [
+    { id: "alvas", label: "Alvás", emoji: "😴" },
+    { id: "kave", label: "Nyugodt kávé", emoji: "☕" },
+    { id: "zuhany", label: "Hosszú zuhany", emoji: "🚿" },
+    { id: "sorozat", label: "Sorozatnézés", emoji: "📺" },
+    { id: "randi", label: "Randizás", emoji: "💑" },
+    { id: "csend", label: "Csend", emoji: "🤫" },
+
+    { id: "rend", label: "Rend és tisztaság", emoji: "🧼" },
+    { id: "enido", label: "Énidő", emoji: "🎮" },
+    { id: "telefon", label: "Telefon nyugodtan", emoji: "📱" },
+    { id: "melegkaja", label: "Meleg étel", emoji: "🍽️" },
+    { id: "ataludt", label: "Átaludt éjszaka", emoji: "🛌" },
+    { id: "zene", label: "Zenehallgatás", emoji: "🎵" },
+
+    { id: "mosas", label: "Mosás utolérése", emoji: "🧺" },
+    { id: "gondolat", label: "Egybefüggő gondolat", emoji: "🧠" },
+    { id: "nyugodteste", label: "Nyugodt este", emoji: "🕯️" }
+];
+
+let votes = JSON.parse(localStorage.getItem("noTimeVotes")) || {};
+
+// inicializálás
+cardsData.forEach(c => {
+    if (!votes[c.id]) votes[c.id] = 0;
+});
+
+function totalVotes() {
+    return Object.values(votes).reduce((a, b) => a + b, 0);
+}
+
+function render() {
+    const container = document.getElementById("cards");
+    container.innerHTML = "";
+
+    const total = totalVotes();
+
+    cardsData.forEach(c => {
+        const percent = total ? Math.round(votes[c.id] / total * 100) : 0;
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <div class="emoji">${c.emoji}</div>
+            <div class="label">${c.label}</div>
+            <div class="result">${votes[c.id]} szavazat · ${percent}%</div>
+        `;
+
+        card.onclick = () => {
+            votes[c.id]++;
+            localStorage.setItem("noTimeVotes", JSON.stringify(votes));
+            render();
+        };
+
+        container.appendChild(card);
+    });
+}
+
+render();
+</script>
+
+</body>
+</html>
