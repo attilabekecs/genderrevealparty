@@ -121,6 +121,43 @@ button {
         <button id="submit">Elküldöm a tippet</button>
     </div>
 </div>
+<!-- ===== POPUP ===== -->
+<div id="popup" style="
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+">
+  <div style="
+    background: white;
+    padding: 40px;
+    border-radius: 25px;
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  ">
+    <h2>🎉 Köszönjük!</h2>
+    <p>A tipped sikeresen elmentve 💕</p>
+
+    <button onclick="goNext()" style="
+      margin-top: 25px;
+      padding: 14px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff9bd0, #7fbce8);
+      color: white;
+    ">
+      Tovább
+    </button>
+  </div>
+</div>
+
 
 <script>
 const params = new URLSearchParams(window.location.search);
@@ -179,20 +216,29 @@ document.getElementById("submit").onclick = () => {
   const dateText = d.toLocaleDateString("hu-HU");
 
   fetch(SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",          // 🔑 EZ A LÉNYEG
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      id: id,
-      date: dateText,
-      time: selectedTime
-    })
-  });
+  method: "POST",
+  mode: "no-cors",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    id: id,
+    date: dateText,
+    time: selectedTime
+  })
+});
 
-  alert("A tipped elküldve! 😊");
-};
+// gomb tiltása
+document.getElementById("submit").disabled = true;
+
+// popup
+document.getElementById("popup").style.display = "flex";
+
+    function goNext() {
+  window.location.href =
+    "harmadikoldal.html?id=" + encodeURIComponent(id);
+}
+
 
 </script>
 
