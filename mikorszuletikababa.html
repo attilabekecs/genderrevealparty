@@ -151,24 +151,25 @@ slider.value = Math.floor(totalDays / 2);
 let selectedTime = null;
 
 function updateDatePreview() {
-    const d = new Date(startDate);
-    d.setDate(startDate.getDate() + Number(slider.value));
-    datePreview.innerText = d.toLocaleDateString("hu-HU");
+  const d = new Date(startDate);
+  d.setDate(startDate.getDate() + Number(slider.value));
+  datePreview.innerText = d.toLocaleDateString("hu-HU");
 }
+
 slider.oninput = updateDatePreview;
 updateDatePreview();
 
-/* ===== NAPSZAK ===== */
+/* ===== NAPSZAK VÁLASZTÁS ===== */
 document.querySelectorAll(".time").forEach(t => {
-    t.onclick = () => {
-        document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
-        t.classList.add("active");
-        selectedTime = t.dataset.time;
-    };
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    selectedTime = t.dataset.time;
+  });
 });
 
 /* ===== KÜLDÉS ===== */
-document.getElementById("submit").onclick = () => {
+document.getElementById("submit").addEventListener("click", () => {
   if (!selectedTime) {
     alert("Válassz napszakot!");
     return;
@@ -176,27 +177,30 @@ document.getElementById("submit").onclick = () => {
 
   const d = new Date(startDate);
   d.setDate(startDate.getDate() + Number(slider.value));
+  const dateText = d.toLocaleDateString("hu-HU");
 
   fetch(SCRIPT_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    id: id,
-    date: dateText,
-    time: selectedTime
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id: id,
+      date: dateText,
+      time: selectedTime
+    })
   })
-})
-.then(r => r.json())
-.then(() => {
-  alert("A tipped elküldve! 😊");
-})
-.catch(() => {
-  alert("Hiba történt a mentésnél 😕");
+  .then(r => r.json())
+  .then(() => {
+    alert("A tipped elküldve! 😊");
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Hiba történt a mentésnél 😕");
+  });
 });
-
 </script>
+
 
 </body>
 </html>
