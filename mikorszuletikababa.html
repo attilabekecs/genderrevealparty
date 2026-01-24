@@ -38,14 +38,6 @@ h1, p {
     margin: 30px 0;
 }
 
-input[type="text"] {
-    padding: 14px;
-    width: 260px;
-    border-radius: 14px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-}
-
 /* SLIDER */
 .slider-wrap {
     width: 100%;
@@ -107,59 +99,6 @@ button {
     background: linear-gradient(135deg, #ff9bd0, #7fbce8);
     color: white;
 }
-
-/* ===== BUBORÉK GRID ===== */
-.bubbles {
-    margin-top: 50px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 24px;
-    justify-items: center;
-}
-
-/* ===== BUBORÉK ===== */
-.bubble {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
-    box-shadow: 0 8px 22px rgba(0,0,0,0.18);
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    padding: 12px;
-    text-align: center;
-    font-size: 12px;
-}
-
-/* NÉV – TÖBB SOR */
-.bubble .name {
-    font-weight: 600;
-    margin-bottom: 6px;
-    line-height: 1.2;
-
-    word-break: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-}
-
-/* DÁTUM */
-.bubble .date {
-    font-size: 11px;
-    margin-bottom: 6px;
-    color: #444;
-}
-
-/* NAPSZAK */
-.bubble .time {
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(0,0,0,0.15);
-}
 </style>
 </head>
 
@@ -170,8 +109,6 @@ button {
     <p>Állítsd be a tipped, majd küldd el!</p>
 
     <div class="inputs">
-        <input type="text" id="name" placeholder="Neved">
-
         <div class="slider-wrap">
             <input type="range" id="slider">
             <div class="date-preview" id="datePreview"></div>
@@ -187,14 +124,14 @@ button {
 
         <button id="submit">Elküldöm a tippet</button>
     </div>
-
-    <div class="bubbles" id="bubbleList"></div>
 </div>
 
 <script>
+// Google Apps Script URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz90B9bjTcOWKTyX4xbRxfTjFH3gnS7m3D3CwgLpp-ChwjwZeB0rn7nqMknUVs-Q_nN8g/exec";
+
 const slider = document.getElementById("slider");
 const datePreview = document.getElementById("datePreview");
-const bubbleList = document.getElementById("bubbleList");
 
 const year = new Date().getFullYear();
 const startDate = new Date(year, 4, 1); // május 1
@@ -206,9 +143,8 @@ slider.max = totalDays;
 slider.value = Math.floor(totalDays / 2);
 
 let selectedTime = null;
-let tips = JSON.parse(localStorage.getItem("birthTips")) || [];
 
-/* DÁTUM PREVIEW */
+// DÁTUM PREVIEW
 function updateDatePreview() {
     const d = new Date(startDate);
     d.setDate(startDate.getDate() + Number(slider.value));
@@ -217,7 +153,7 @@ function updateDatePreview() {
 slider.oninput = updateDatePreview;
 updateDatePreview();
 
-/* NAPSZAK */
+// NAPSZAK
 document.querySelectorAll(".time").forEach(t => {
     t.onclick = () => {
         document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
@@ -226,53 +162,36 @@ document.querySelectorAll(".time").forEach(t => {
     };
 });
 
-/* RENDER – IDŐREND */
-function render() {
-    bubbleList.innerHTML = "";
-
-    tips
-        .filter(t => typeof t.rawDate === "number")
-        .sort((a, b) => a.rawDate - b.rawDate)
-        .forEach(t => {
-            const b = document.createElement("div");
-            b.className = "bubble";
-            b.innerHTML = `
-                <div class="name">${t.name}</div>
-                <div class="date">${t.dateText}</div>
-                <div class="time">${t.time}</div>
-            `;
-            bubbleList.appendChild(b);
-        });
-}
-
-/* ELKÜLD */
+// ELKÜLDÉS GOOGLE SHEETS-RE
 document.getElementById("submit").onclick = () => {
-    const name = document.getElementById("name").value.trim();
-    if (!name || !selectedTime) {
-        alert("Add meg a neved és napszakot!");
+    if (!selectedTime) {
+        alert("Válassz napszakot!");
         return;
     }
 
     const d = new Date(startDate);
     d.setDate(startDate.getDate() + Number(slider.value));
+    const dateText = d.toLocaleDateString("hu-HU");
 
-    tips.push({
-        name,
-        rawDate: d.getTime(),
-        dateText: d.toLocaleDateString("hu-HU"),
-        time: selectedTime
+    // Küldés Google Sheets-be
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            date: dateText,
+            time: selectedTime
+        })
     });
 
-    localStorage.setItem("birthTips", JSON.stringify(tips));
-
-    document.getElementById("name").value = "";
+    // Reset slider + napszak
+    slider.value = Math.floor(totalDays / 2);
+    updateDatePreview();
     document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
     selectedTime = null;
 
-    render();
+    alert("A tipped elküldve! 😊");
 };
-
-render();
 </script>
 
 </body>
