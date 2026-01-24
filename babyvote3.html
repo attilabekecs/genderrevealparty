@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Babaváró buli – Tippeld meg a baba nemét</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
+    height: 100vh;
+}
+
+/* TELJES OLDAL */
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1fr;
+    gap: 30px;
+    width: 100vw;
+    height: 100vh;
+    padding: 30px;
+}
+
+/* BOXOK */
+.box {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    overflow-y: auto;
+}
+
+/* KÖZÉP */
+.center {
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+
+input {
+    padding: 14px;
+    width: 80%;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    margin: 20px 0;
+}
+
+/* LUFI */
+.balloons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+}
+
+.balloon {
+    width: 130px;
+    height: 170px;
+    border-radius: 50% 50% 45% 45%;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.balloon:hover { transform: scale(1.05); }
+
+.balloon::after {
+    content: "";
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    width: 2px;
+    height: 35px;
+    background: #999;
+}
+
+.pink {
+    background: radial-gradient(circle at 30% 30%, #fff, #ff69b4);
+}
+
+.blue {
+    background: radial-gradient(circle at 30% 30%, #fff, #5dade2);
+}
+
+/* POP */
+.pop {
+    animation: pop 0.4s forwards;
+}
+
+@keyframes pop {
+    to {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* LISTÁK */
+ul { list-style: none; padding: 0; margin-top: 15px; }
+li { padding: 10px 0; border-bottom: 1px solid #eee; }
+
+/* KONFETTI */
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+/* MOBIL */
+@media (max-width: 900px) {
+    .wrapper {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+}
+    .counts {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 150px;      /* távolság a madzagtól */
+    padding-bottom: 20px;  /* levegő a box alja felé */
+}
+
+
+.count {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.pink-text {
+    color: #ff69b4;
+}
+
+.blue-text {
+    color: #5dade2;
+}
+  /* POPUP */
+.popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background: white;
+    padding: 40px;
+    border-radius: 25px;
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+.popup-content h2 {
+    margin-top: 0;
+    font-size: 26px;
+}
+
+.popup-content button {
+    margin-top: 25px;
+    padding: 14px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff69b4, #5dade2);
+    color: white;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="wrapper">
+
+    <!-- LÁNY -->
+    <div class="box">
+        <h2 style="color:#ff69b4">💗 Lány tippek</h2>
+        <ul id="girlList"></ul>
+    </div>
+
+    <!-- KÖZÉP -->
+    <div class="box center">
+        <h1>🎉 Babaváró buli 🎉</h1>
+        <p>Tippeld meg a baba nemét!</p>
+
+        <input type="text" id="name" placeholder="Add meg a neved">
+
+        <div class="balloons">
+            <div class="balloon pink" onclick="vote('kislány', this)"></div>
+            <div class="balloon blue" onclick="vote('kisfiú', this)"></div>
+        </div>
+        <div class="counts">
+  <div class="count pink-text">
+    💗 <span id="girlCount">0</span>
+  </div>
+  <div class="count blue-text">
+    💙 <span id="boyCount">0</span>
+  </div>
+</div>
+
+
+        <p id="message"></p>
+    </div>
+
+    <!-- FIÚ -->
+    <div class="box">
+        <h2 style="color:#5dade2">💙 Fiú tippek</h2>
+        <ul id="boyList"></ul>
+    </div>
+
+</div>
+  <!-- POPUP -->
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <h2 id="popupTitle"></h2>
+    <p id="popupText"></p>
+    <button onclick="closePopup()">Tovább</button>
+  </div>
+</div>
+
+
+<script>
+/* ===== GOOGLE SCRIPT URL ===== */
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbz90B9bjTcOWKTyX4xbRxfTjFH3gnS7m3D3CwgLpp-ChwjwZeB0rn7nqMknUVs-Q_nN8g/exec";
+
+/* ===== KONFETTI ===== */
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let confetti = [];
+
+function createConfetti(color) {
+    for (let i = 0; i < 120; i++) {
+        confetti.push({
+            x: Math.random() * canvas.width,
+            y: -10,
+            size: Math.random() * 6 + 4,
+            speed: Math.random() * 4 + 2,
+            color
+        });
+    }
+    animateConfetti();
+}
+
+function animateConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    confetti.forEach((p, i) => {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        p.y += p.speed;
+        if (p.y > canvas.height) confetti.splice(i, 1);
+    });
+    if (confetti.length > 0) requestAnimationFrame(animateConfetti);
+}
+
+/* ===== LISTÁK BETÖLTÉSE SHEETS-BŐL ===== */
+function renderLists() {
+    fetch(SCRIPT_URL)
+        .then(r => r.json())
+        .then(tips => {
+            const girl = document.getElementById("girlList");
+            const boy = document.getElementById("boyList");
+            girl.innerHTML = "";
+            boy.innerHTML = "";
+
+            let girlCounter = 0;
+let boyCounter = 0;
+
+tips.forEach(t => {
+    const li = document.createElement("li");
+    li.textContent = t.name;
+
+    if (t.choice === "kislány") {
+        girl.appendChild(li);
+        girlCounter++;
+    } else if (t.choice === "kisfiú") {
+        boy.appendChild(li);
+        boyCounter++;
+    }
+});
+
+// számlálók frissítése
+document.getElementById("girlCount").innerText = girlCounter;
+document.getElementById("boyCount").innerText = boyCounter;
+
+        });
+}
+
+/* ===== SZAVAZÁS ===== */
+function vote(choice, balloon) {
+    const nameInput = document.getElementById("name");
+    const name = nameInput.value.trim();
+    if (!name) return alert("Add meg a neved!");
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name: name,
+            choice: choice
+        })
+    }).then(renderLists);
+
+    const color = choice === "kislány" ? "#ff69b4" : "#5dade2";
+    balloon.classList.add("pop");
+    createConfetti(color);
+
+    // POPUP tartalom
+    document.getElementById("popupTitle").innerText =
+        choice === "kislány" ? "💗 Kislányra szavaztál!" : "💙 Kisfiúra szavaztál!";
+    document.getElementById("popupText").innerText =
+        `Köszönjük, ${name}!`;
+
+    document.getElementById("popup").style.display = "flex";
+
+    setTimeout(() => {
+        document.querySelectorAll(".balloon")
+            .forEach(b => b.classList.remove("pop"));
+    }, 400);
+}
+
+
+/* INIT */
+renderLists();
+setInterval(renderLists, 1000);
+
+window.onresize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+};
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("name").value = "";
+}
+
+</script>
+
+</body>
+</html>
