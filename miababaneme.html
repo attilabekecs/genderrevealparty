@@ -346,9 +346,12 @@ window.onresize = () => {
     canvas.height = window.innerHeight;
 };
 
-  function closePopup() {
-    window.location.href = "https://attilabekecs.github.io/genderrevealparty/mikorszuletikababa.html";
+function closePopup() {
+  const ts = sessionStorage.getItem("timestamp");
+  window.location.href =
+    "https://attilabekecs.github.io/genderrevealparty/mikorszuletikababa.html?ts=" + ts;
 }
+
 
 
 </script>
