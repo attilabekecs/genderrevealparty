@@ -169,22 +169,28 @@ document.getElementById("submit").onclick = () => {
         return;
     }
 
+    const timestamp = sessionStorage.getItem("timestamp");
+    if (!timestamp) {
+        alert("Hiányzó azonosító. Kérlek az első oldalon kezdj!");
+        return;
+    }
+
     const d = new Date(startDate);
     d.setDate(startDate.getDate() + Number(slider.value));
     const dateText = d.toLocaleDateString("hu-HU");
 
-    // Küldés Google Sheets-be
     fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+            timestamp: Number(timestamp),
             date: dateText,
             time: selectedTime
         })
     });
 
-    // Reset slider + napszak
+    // UI reset
     slider.value = Math.floor(totalDays / 2);
     updateDatePreview();
     document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
@@ -192,6 +198,7 @@ document.getElementById("submit").onclick = () => {
 
     alert("A tipped elküldve! 😊");
 };
+
 </script>
 
 </body>
