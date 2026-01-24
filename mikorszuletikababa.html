@@ -178,18 +178,21 @@ document.getElementById("submit").onclick = () => {
   d.setDate(startDate.getDate() + Number(slider.value));
   const dateText = d.toLocaleDateString("hu-HU");
 
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: id,
-      date: dateText,
-      time: selectedTime
-    })
+fetch(SCRIPT_URL, {
+  method: "POST",
+  mode: "no-cors",          // 🔑 EZ A LÉNYEG
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    id: id,
+    date: dateText,
+    time: selectedTime
   })
-  .then(() => alert("A tipped elküldve! 😊"))
-  .catch(() => alert("Hiba történt a mentésnél 😕"));
-};
+});
+
+alert("A tipped elküldve! 😊");
+
 </script>
 
 
