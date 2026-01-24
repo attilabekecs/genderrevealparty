@@ -216,24 +216,25 @@ document.getElementById("submit").onclick = () => {
   const dateText = d.toLocaleDateString("hu-HU");
 
   fetch(SCRIPT_URL, {
-  method: "POST",
-  mode: "no-cors",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    id: id,
-    date: dateText,
-    time: selectedTime
-  })
-});
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id: id,
+      date: dateText,
+      time: selectedTime
+    })
+  });
 
-// gomb tiltása
-document.getElementById("submit").disabled = true;
+  // gomb tiltása
+  document.getElementById("submit").disabled = true;
 
-// popup
-document.getElementById("popup").style.display = "flex";
-});
+  // popup megjelenítése
+  document.getElementById("popup").style.display = "flex";
+};
+
     function goNext() {
   window.location.href =
     "https://attilabekecs.github.io/genderrevealparty/page3.html?id=" + encodeURIComponent(id);
