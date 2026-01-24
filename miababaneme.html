@@ -279,7 +279,9 @@ function renderLists() {
             let girlCounter = 0;
 let boyCounter = 0;
 
-tips.forEach(t => {
+tips
+  .filter(t => t.name && t.choice)
+  .forEach(t => {
     const li = document.createElement("li");
     li.textContent = t.name;
 
@@ -291,6 +293,7 @@ tips.forEach(t => {
         boyCounter++;
     }
 });
+
 
 // számlálók frissítése
 document.getElementById("girlCount").innerText = girlCounter;
@@ -313,8 +316,12 @@ function vote(choice, balloon) {
             choice: choice
         })
     })
-    .then(r => r.json())
-    .then(res => {
+ .then(async r => {
+  const text = await r.text();
+  return text ? JSON.parse(text) : {};
+})
+.then(res => {
+
         // 🔑 TIMESTAMP ELMENTÉSE A 2. OLDALNAK
         if (res.timestamp) {
             sessionStorage.setItem("timestamp", res.timestamp);
