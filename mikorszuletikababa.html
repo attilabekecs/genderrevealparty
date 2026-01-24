@@ -123,7 +123,6 @@ button {
 </div>
 
 <script>
-/* ===== ID AZ URL-BŐL ===== */
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
@@ -131,11 +130,9 @@ if (!id) {
   alert("Hiányzó azonosító. Kérlek az első oldalon kezdj!");
 }
 
-/* ===== APPS SCRIPT URL ===== */
 const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbxSWYfmaacSgW637VsPQrRcfMnIJMjLfKnLjw2IJHFc102ASleAJYXe3uOLA5PQCfOB/exec";
 
-/* ===== SLIDER ===== */
 const slider = document.getElementById("slider");
 const datePreview = document.getElementById("datePreview");
 
@@ -160,6 +157,17 @@ slider.oninput = updateDatePreview;
 updateDatePreview();
 
 /* ===== NAPSZAK VÁLASZTÁS ===== */
+document.querySelectorAll(".time").forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll(".time")
+      .forEach(x => x.classList.remove("active"));
+
+    t.classList.add("active");
+    selectedTime = t.dataset.time;
+  };
+});
+
+/* ===== KÜLDÉS ===== */
 document.getElementById("submit").onclick = () => {
   if (!selectedTime) {
     alert("Válassz napszakot!");
@@ -168,30 +176,22 @@ document.getElementById("submit").onclick = () => {
 
   const d = new Date(startDate);
   d.setDate(startDate.getDate() + Number(slider.value));
-  const dateText = d.toLocaleDateString("hu-HU"); // ⬅️ EZ HIÁNYZOTT
+  const dateText = d.toLocaleDateString("hu-HU");
 
   fetch(SCRIPT_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       id: id,
       date: dateText,
       time: selectedTime
     })
   })
-  .then(() => {
-    alert("A tipped elküldve! 😊");
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Hiba történt a mentésnél 😕");
-  });
+  .then(() => alert("A tipped elküldve! 😊"))
+  .catch(() => alert("Hiba történt a mentésnél 😕"));
 };
-
-
 </script>
+
 
 
 </body>
