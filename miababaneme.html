@@ -304,21 +304,26 @@ document.getElementById("boyCount").innerText = boyCounter;
 
 /* ===== SZAVAZÁS ===== */
 function vote(choice, balloon) {
-    const nameInput = document.getElementById("name");
-    const name = nameInput.value.trim();
-    if (!name) return alert("Add meg a neved!");
+  const nameInput = document.getElementById("name");
+  const name = nameInput.value.trim();
+  if (!name) return alert("Add meg a neved!");
 
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",   // 🔑 EZ A LÉNYEG
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            name: name,
-            choice: choice
-        })
-    });
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" }, // 🔑 preflight-mentesebb
+    body: JSON.stringify({ name, choice })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (!res || !res.id) {
+      alert("Hiba: nem érkezett vissza azonosító (id).");
+      return;
+    }
 
-    // 👉 INNENTŐL SIKERNEK VESSZÜK
+    // ✅ ID eltárolása a popup gombhoz
+    sessionStorage.setItem("voteId", res.id);
+
+    // UI effektek
     renderLists();
 
     const color = choice === "kislány" ? "#ff69b4" : "#5dade2";
@@ -326,17 +331,21 @@ function vote(choice, balloon) {
     createConfetti(color);
 
     document.getElementById("popupTitle").innerText =
-        choice === "kislány" ? "💗 Kislányra szavaztál!" : "💙 Kisfiúra szavaztál!";
-    document.getElementById("popupText").innerText =
-        `Köszönjük, ${name}!`;
+      choice === "kislány" ? "💗 Kislányra szavaztál!" : "💙 Kisfiúra szavaztál!";
+    document.getElementById("popupText").innerText = `Köszönjük, ${name}!`;
 
     document.getElementById("popup").style.display = "flex";
 
     setTimeout(() => {
-        document.querySelectorAll(".balloon")
-            .forEach(b => b.classList.remove("pop"));
+      document.querySelectorAll(".balloon").forEach(b => b.classList.remove("pop"));
     }, 400);
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Hiba történt a mentésnél 😕");
+  });
 }
+
 
 /* INIT */
 renderLists();
@@ -347,9 +356,13 @@ window.onresize = () => {
 };
 
 function closePopup() {
-  const ts = sessionStorage.getItem("timestamp");
+  const id = sessionStorage.getItem("voteId");
+  if (!id) {
+    alert("Hiányzó azonosító. Szavazz újra kérlek!");
+    return;
+  }
   window.location.href =
-    "https://attilabekecs.github.io/genderrevealparty/mikorszuletikababa.html?ts=" + ts;
+    "https://attilabekecs.github.io/genderrevealparty/mikorszuletikababa.html?id=" + encodeURIComponent(id);
 }
 
 
