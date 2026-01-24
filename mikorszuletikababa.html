@@ -160,16 +160,7 @@ slider.oninput = updateDatePreview;
 updateDatePreview();
 
 /* ===== NAPSZAK VÁLASZTÁS ===== */
-document.querySelectorAll(".time").forEach(t => {
-  t.addEventListener("click", () => {
-    document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
-    t.classList.add("active");
-    selectedTime = t.dataset.time;
-  });
-});
-
-/* ===== KÜLDÉS ===== */
-document.getElementById("submit").addEventListener("click", () => {
+document.getElementById("submit").onclick = () => {
   if (!selectedTime) {
     alert("Válassz napszakot!");
     return;
@@ -177,26 +168,28 @@ document.getElementById("submit").addEventListener("click", () => {
 
   const d = new Date(startDate);
   d.setDate(startDate.getDate() + Number(slider.value));
-  const dateText = d.toLocaleDateString("hu-HU");
+  const dateText = d.toLocaleDateString("hu-HU"); // ⬅️ EZ HIÁNYZOTT
 
   fetch(SCRIPT_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    id: id,
-    date: dateText,
-    time: selectedTime
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id: id,
+      date: dateText,
+      time: selectedTime
+    })
   })
-})
-.then(() => {
-  alert("A tipped elküldve! 😊");
-})
-.catch(err => {
-  console.error(err);
-  alert("Hiba történt a mentésnél 😕");
-});
+  .then(() => {
+    alert("A tipped elküldve! 😊");
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Hiba történt a mentésnél 😕");
+  });
+};
+
 
 </script>
 
