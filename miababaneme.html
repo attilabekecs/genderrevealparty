@@ -310,46 +310,33 @@ function vote(choice, balloon) {
 
     fetch(SCRIPT_URL, {
         method: "POST",
+        mode: "no-cors",   // 🔑 EZ A LÉNYEG
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             name: name,
             choice: choice
         })
-    })
- .then(async r => {
-  const text = await r.text();
-  return text ? JSON.parse(text) : {};
-})
-.then(res => {
-
-        // 🔑 TIMESTAMP ELMENTÉSE A 2. OLDALNAK
-        if (res.timestamp) {
-            sessionStorage.setItem("timestamp", res.timestamp);
-        }
-
-        renderLists();
-
-        const color = choice === "kislány" ? "#ff69b4" : "#5dade2";
-        balloon.classList.add("pop");
-        createConfetti(color);
-
-        document.getElementById("popupTitle").innerText =
-            choice === "kislány" ? "💗 Kislányra szavaztál!" : "💙 Kisfiúra szavaztál!";
-        document.getElementById("popupText").innerText =
-            `Köszönjük, ${name}!`;
-
-        document.getElementById("popup").style.display = "flex";
-
-        setTimeout(() => {
-            document.querySelectorAll(".balloon")
-                .forEach(b => b.classList.remove("pop"));
-        }, 400);
-    })
-    .catch(() => {
-        alert("Hiba történt a mentésnél 😕");
     });
-}
 
+    // 👉 INNENTŐL SIKERNEK VESSZÜK
+    renderLists();
+
+    const color = choice === "kislány" ? "#ff69b4" : "#5dade2";
+    balloon.classList.add("pop");
+    createConfetti(color);
+
+    document.getElementById("popupTitle").innerText =
+        choice === "kislány" ? "💗 Kislányra szavaztál!" : "💙 Kisfiúra szavaztál!";
+    document.getElementById("popupText").innerText =
+        `Köszönjük, ${name}!`;
+
+    document.getElementById("popup").style.display = "flex";
+
+    setTimeout(() => {
+        document.querySelectorAll(".balloon")
+            .forEach(b => b.classList.remove("pop"));
+    }, 400);
+}
 
 /* INIT */
 renderLists();
