@@ -29,7 +29,6 @@ h1, p {
     margin-top: 0;
 }
 
-/* INPUT */
 .inputs {
     display: flex;
     flex-direction: column;
@@ -38,7 +37,6 @@ h1, p {
     margin: 30px 0;
 }
 
-/* SLIDER */
 .slider-wrap {
     width: 100%;
     max-width: 700px;
@@ -69,7 +67,6 @@ input[type="range"]::-webkit-slider-thumb {
     color: #444;
 }
 
-/* NAPSZAK */
 .times {
     display: flex;
     gap: 12px;
@@ -89,7 +86,6 @@ input[type="range"]::-webkit-slider-thumb {
     border-color: transparent;
 }
 
-/* GOMB */
 button {
     padding: 14px 34px;
     border-radius: 999px;
@@ -127,9 +123,19 @@ button {
 </div>
 
 <script>
-// Google Apps Script URL
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHY0UDn5wO3TIu3vZNJh_eC4kG5TWDNzi2KjgQiHFT1U3k-SaxksgG6YB_OyMy7z_S/exec";
+/* ===== TIMESTAMP URL-BŐL ===== */
+const params = new URLSearchParams(window.location.search);
+const timestamp = params.get("ts");
 
+if (!timestamp) {
+    alert("Hiányzó azonosító. Kérlek az első oldalon kezdj!");
+}
+
+/* ===== GOOGLE APPS SCRIPT URL ===== */
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbwHY0UDn5wO3TIu3vZNJh_eC4kG5TWDNzi2KjgQiHFT1U3k-SaxksgG6YB_OyMy7z_S/exec";
+
+/* ===== SLIDER LOGIKA ===== */
 const slider = document.getElementById("slider");
 const datePreview = document.getElementById("datePreview");
 
@@ -144,7 +150,6 @@ slider.value = Math.floor(totalDays / 2);
 
 let selectedTime = null;
 
-// DÁTUM PREVIEW
 function updateDatePreview() {
     const d = new Date(startDate);
     d.setDate(startDate.getDate() + Number(slider.value));
@@ -153,7 +158,7 @@ function updateDatePreview() {
 slider.oninput = updateDatePreview;
 updateDatePreview();
 
-// NAPSZAK
+/* ===== NAPSZAK ===== */
 document.querySelectorAll(".time").forEach(t => {
     t.onclick = () => {
         document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
@@ -162,16 +167,10 @@ document.querySelectorAll(".time").forEach(t => {
     };
 });
 
-// ELKÜLDÉS GOOGLE SHEETS-RE
+/* ===== KÜLDÉS ===== */
 document.getElementById("submit").onclick = () => {
     if (!selectedTime) {
         alert("Válassz napszakot!");
-        return;
-    }
-
-    const timestamp = sessionStorage.getItem("timestamp");
-    if (!timestamp) {
-        alert("Hiányzó azonosító. Kérlek az első oldalon kezdj!");
         return;
     }
 
@@ -190,15 +189,8 @@ document.getElementById("submit").onclick = () => {
         })
     });
 
-    // UI reset
-    slider.value = Math.floor(totalDays / 2);
-    updateDatePreview();
-    document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
-    selectedTime = null;
-
     alert("A tipped elküldve! 😊");
 };
-
 </script>
 
 </body>
