@@ -396,10 +396,14 @@ const API_URL = window.APP_CONFIG.API_URL;
 
 
 /* ===== KONFETTI ===== */
-const canvas = document.getElementById("confetti");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+let canvas, ctx;
+
+document.addEventListener("DOMContentLoaded", () => {
+  canvas = document.getElementById("confetti");
+  ctx = canvas.getContext("2d");
+  resizeCanvas();
+  renderLists();
+});
 
 let confetti = [];
 
@@ -496,7 +500,7 @@ function vote(choice, balloon) {
   document.getElementById("popupTitle").innerText =
     choice === "kislány" ? "💗 Kislányra szavaztál!" : "💙 Kisfiúra szavaztál!";
   document.getElementById("popupText").innerText = `Köszönjük, ${name}!`;
-  document.getElementById("popup").style.display = "flex";
+
 
   setTimeout(() => {
     document.querySelectorAll(".balloon").forEach(b => b.classList.remove("pop"));
@@ -520,6 +524,7 @@ fetch(API_URL, {
   if (res.id) {
     sessionStorage.setItem("voteId", res.id);
     renderLists();
+    document.getElementById("popup").style.display = "flex";
   } else {
     alert(res.message || "Mentési hiba");
   }
@@ -532,15 +537,11 @@ fetch(API_URL, {
 }
 
 /* INIT */
-renderLists();
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
-
-// csak egyszer, induláskor
-resizeCanvas();
 
 // csak valódi orientációváltáskor
 window.addEventListener("orientationchange", () => {
