@@ -98,90 +98,111 @@ h1, p {
 </div>
 
 <script>
-const API_URL = 
+const API_URL =
 "https://script.google.com/macros/s/AKfycbyhY-rAfYCIFxn-OeD7VeUd4tZPlDjhgCT1TyZsUJZ3nOzk4eLM1bJvMQMM08c3Vsvg/exec";
 
 const urlParams = new URLSearchParams(window.location.search);
 const userId = urlParams.get("id");
 
 if (!userId) {
-    alert("Hiányzó azonosító!");
+  alert("Hiányzó azonosító!");
 }
 
+/* ===== ADATOK ===== */
 const cardsData = [
-    { id: "alvas", label: "Alvás", emoji: "😴" },
-    { id: "kave", label: "Nyugodt kávé", emoji: "☕" },
-    { id: "zuhany", label: "Hosszú zuhany", emoji: "🚿" },
-    { id: "sorozat", label: "Sorozatnézés", emoji: "📺" },
-    { id: "randi", label: "Randizás", emoji: "💑" },
-    { id: "csend", label: "Csend", emoji: "🤫" },
-    { id: "rend", label: "Rend és tisztaság", emoji: "🧼" },
-    { id: "enido", label: "Énidő", emoji: "🎮" },
-    { id: "telefon", label: "Telefon nyugodtan", emoji: "📱" },
-    { id: "melegkaja", label: "Meleg étel", emoji: "🍽️" },
-    { id: "ataludt", label: "Átaludt éjszaka", emoji: "🛌" },
-    { id: "zene", label: "Zenehallgatás", emoji: "🎵" },
-    { id: "mosas", label: "Mosás utolérése", emoji: "🧺" },
-    { id: "gondolat", label: "Egybefüggő gondolat", emoji: "🧠" },
-    { id: "nyugodteste", label: "Nyugodt este", emoji: "🕯️" },
-    { id: "sport", label: "Sportolás", emoji: "🏃‍♂️" }
+  { id: "alvas", label: "Alvás", emoji: "😴" },
+  { id: "kave", label: "Nyugodt kávé", emoji: "☕" },
+  { id: "zuhany", label: "Hosszú zuhany", emoji: "🚿" },
+  { id: "sorozat", label: "Sorozatnézés", emoji: "📺" },
+  { id: "randi", label: "Randizás", emoji: "💑" },
+  { id: "csend", label: "Csend", emoji: "🤫" },
+  { id: "rend", label: "Rend és tisztaság", emoji: "🧼" },
+  { id: "enido", label: "Énidő", emoji: "🎮" },
+  { id: "telefon", label: "Telefon nyugodtan", emoji: "📱" },
+  { id: "melegkaja", label: "Meleg étel", emoji: "🍽️" },
+  { id: "ataludt", label: "Átaludt éjszaka", emoji: "🛌" },
+  { id: "zene", label: "Zenehallgatás", emoji: "🎵" },
+  { id: "mosas", label: "Mosás utolérése", emoji: "🧺" },
+  { id: "gondolat", label: "Egybefüggő gondolat", emoji: "🧠" },
+  { id: "nyugodteste", label: "Nyugodt este", emoji: "🕯️" },
+  { id: "sport", label: "Sportolás", emoji: "🏃‍♂️" }
 ];
 
+/* ===== ÁLLAPOT ===== */
+let selectedVotes = {};
+const cardMap = {};
+
+/* ===== CSEMPÉK LÉTREHOZÁSA (EGYSZER) ===== */
+function buildCards() {
+  const container = document.getElementById("cards");
+
+  cardsData.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <div class="emoji">${c.emoji}</div>
+      <div class="label">${c.label}</div>
+      <div class="result">Szavazat: 0 db</div>
+    `;
+
+    card.onclick = () => vote(c.id);
+
+    container.appendChild(card);
+    cardMap[c.id] = card;
+  });
+}
+
+/* ===== UI FRISSÍTÉS ===== */
+function updateUI() {
+  cardsData.forEach(c => {
+    const card = cardMap[c.id];
+    if (!card) return;
+
+    const active = selectedVotes[c.id] === true;
+
+    card.style.opacity = active ? "1" : "0.6";
+    card.querySelector(".result").innerText =
+      active ? "Kiválasztva" : "Szavazat: 0 db";
+  });
+}
+
+/* ===== SZAVAZÁS ===== */
 async function vote(optionId) {
-    await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            id: userId,
-            vote: optionId
-        })
-    });
+  await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: userId,
+      vote: optionId
+    })
+  });
 
-    loadVotes();
+  loadVotes();
 }
 
+/* ===== ADAT BETÖLTÉS ===== */
 async function loadVotes() {
-    let selected = {};
+  try {
+    const res = await fetch(API_URL + "?id=" + userId + "&mode=votes");
+    const data = await res.json();
 
-    try {
-        const res = await fetch(API_URL + "?id=" + userId + "&mode=votes");
-        const data = await res.json();
-
-        if (data && !data.error) {
-            selected = data;
-        }
-    } catch (err) {
-        console.error("Vote load error:", err);
+    if (data && !data.error) {
+      selectedVotes = data;
     }
+  } catch (err) {
+    console.error("Vote load error:", err);
+  }
 
-    render(selected);
+  updateUI();
 }
 
-function render(selected) {
-    const container = document.getElementById("cards");
-    container.innerHTML = "";
-
-    cardsData.forEach(c => {
-        const active = selected && selected[c.id];
-
-        const card = document.createElement("div");
-        card.className = "card";
-        card.style.opacity = active ? "1" : "0.6";
-
-        card.innerHTML = `
-            <div class="emoji">${c.emoji}</div>
-            <div class="label">${c.label}</div>
-            <div class="result">${active ? "Kiválasztva" : ""}</div>
-        `;
-
-        card.onclick = () => vote(c.id);
-        container.appendChild(card);
-    });
-}
-
-// 🔥 EZ KÖTELEZŐ
-loadVotes();
+/* ===== INDÍTÁS ===== */
+buildCards();   // csempék AZONNAL
+updateUI();     // alap állapot
+loadVotes();    // adat backendről
 </script>
+
 
 
 </body>
