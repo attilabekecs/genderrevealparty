@@ -116,6 +116,21 @@ canvas {
     padding: 20px 0;
 }
 
+.mobile-loading {
+    display: none;
+    text-align: center;
+    margin-top: 15px;
+    font-style: italic;
+    color: #888;
+}
+
+@media (max-width: 900px) {
+    .mobile-loading {
+        display: block;
+    }
+}
+
+
 
 /* MOBIL */
 @media (max-width: 900px) {
@@ -223,28 +238,33 @@ canvas {
     </div>
 
     <!-- KÖZÉP -->
-    <div class="box center">
-        <h1>🎉 Babaváró buli 🎉</h1>
-        <p>Tippeld meg a baba nemét!</p>
+   <div class="box center">
+    <h1>🎉 Babaváró buli 🎉</h1>
+    <p>Tippeld meg a baba nemét!</p>
 
-        <input type="text" id="name" placeholder="Add meg a neved">
+    <input type="text" id="name" placeholder="Add meg a neved">
 
-        <div class="balloons">
-            <div class="balloon pink" onclick="vote('kislány', this)"></div>
-            <div class="balloon blue" onclick="vote('kisfiú', this)"></div>
+    <div class="balloons">
+        <div class="balloon pink" onclick="vote('kislány', this)"></div>
+        <div class="balloon blue" onclick="vote('kisfiú', this)"></div>
+    </div>
+
+    <div class="counts">
+        <div class="count pink-text">
+            💗 <span id="girlCount">0</span>
         </div>
-        <div class="counts">
-  <div class="count pink-text">
-    💗 <span id="girlCount">0</span>
-  </div>
-  <div class="count blue-text">
-    💙 <span id="boyCount">0</span>
-  </div>
+        <div class="count blue-text">
+            💙 <span id="boyCount">0</span>
+        </div>
+
+        <p id="mobileLoading" class="mobile-loading">
+            ⏳ Pillanat… betöltődnek a tippjeitek!
+        </p>
+    </div>
+
+    <p id="message"></p>
 </div>
 
-
-        <p id="message"></p>
-    </div>
 
     <!-- FIÚ -->
     <div class="box">
@@ -304,6 +324,9 @@ function animateConfetti() {
 function renderLists() {
     const girl = document.getElementById("girlList");
     const boy = document.getElementById("boyList");
+    const mobileLoading = document.getElementById("mobileLoading");
+if (mobileLoading) mobileLoading.style.display = "block";
+
 
     // ⏳ BETÖLTÉS JELZÉS
     girl.innerHTML = `<li class="loading">⏳ Pillanat…<br>betöltődnek a tippjeitek!</li>`;
@@ -335,10 +358,14 @@ function renderLists() {
 
             document.getElementById("girlCount").innerText = girlCounter;
             document.getElementById("boyCount").innerText = boyCounter;
+
+            if (mobileLoading) mobileLoading.style.display = "none";
         })
         .catch(() => {
             girl.innerHTML = `<li class="loading">😕 Nem sikerült betölteni</li>`;
             boy.innerHTML = `<li class="loading">😕 Nem sikerült betölteni</li>`;
+            mobileLoading.innerText = "😕 Nem sikerült betölteni a tippeket";
+
         });
 }
 
