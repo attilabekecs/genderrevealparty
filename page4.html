@@ -73,7 +73,8 @@ button {
 <script>
 document.getElementById("send").onclick = async () => {
     const text = document.getElementById("message").value.trim();
-    const userId = localStorage.getItem("userId"); // azonosító az előző oldalról
+    const params = new URLSearchParams(window.location.search);
+const userId = params.get("id");
 
     if (!text) {
         alert("Kérlek, írj egy üzenetet.");
