@@ -138,6 +138,50 @@ h1, p {
   pointer-events: none;
   opacity: 0.6;
 }
+/* ===== MODAL ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+.modal-text {
+  margin-top: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #444;
+}
+
+/* ===== SPINNER ===== */
+.spinner {
+  width: 46px;
+  height: 46px;
+  border: 5px solid #eee;
+  border-top: 5px solid #ff9fc5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 
 </style>
@@ -165,12 +209,33 @@ h1, p {
   display:none;
 ">
 </div>
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <div class="spinner"></div>
+    <div class="modal-text">
+      ⏳ Feldolgozzuk a szavazatod…
+    </div>
+  </div>
+</div>
+
 
 
     <div class="cards" id="cards"></div>
 </div>
 
 <script>
+const modalEl = document.getElementById("modal");
+
+function showModal(text = "⏳ Feldolgozzuk a szavazatod…") {
+  modalEl.querySelector(".modal-text").innerText = text;
+  modalEl.classList.remove("hidden");
+}
+
+function hideModal() {
+  modalEl.classList.add("hidden");
+}
+
+
 const statusEl = document.getElementById("status");
 const cardsContainer = document.getElementById("cards");
 
@@ -277,7 +342,7 @@ async function vote(optionId) {
 
   voting = true;
   cardsContainer.classList.add("disabled");
-  showStatus("⏳ Szavazat elküldése, kérlek várj…");
+  showModal("⏳ Szavazat feldolgozása…");
 
   selectedOptions.add(optionId);
   localStorage.setItem(
@@ -297,22 +362,17 @@ async function vote(optionId) {
       })
     });
 
-    showStatus("🔄 Szavazatok frissítése…");
+    showModal("🔄 Szavazatok frissítése…");
 
     await loadCounts();
     updateUI();
 
-    showStatus("✅ Szavazat rögzítve! Választhatsz másik csempét 😊");
-
-    setTimeout(() => {
-      hideStatus();
-    }, 2500);
-
   } catch (err) {
-    showStatus("⚠️ Hiba történt, próbáld újra!");
+    alert("Hiba történt, próbáld újra!");
   } finally {
     voting = false;
     cardsContainer.classList.remove("disabled");
+    hideModal();
   }
 }
 
