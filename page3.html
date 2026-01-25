@@ -98,7 +98,7 @@ h1, p {
 </div>
 
 <script>
-const API_URL = "IDE_A_DEPLOY_URL";
+const API_URL = "https://script.google.com/macros/s/AKfycbzrbCTVanAemlMkW7-2XCHpIngIOv-Et5bZeJZ4hTWneZsFGoT6HlkbmUdzkwVNtG0C/exec";
 
 const urlParams = new URLSearchParams(window.location.search);
 const userId = urlParams.get("id");
@@ -140,7 +140,7 @@ async function vote(optionId) {
 }
 
 async function loadVotes() {
-    const res = await fetch(API_URL + "?id=" + userId);
+    const res = await fetch(API_URL + "?id=" + userId + "&mode=votes");
     const selected = await res.json();
 
     render(selected);
