@@ -178,6 +178,31 @@ h1, p {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+.next-btn {
+  margin-top: auto;
+  align-self: center;
+  padding: 14px 36px;
+  border-radius: 999px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+
+  background: linear-gradient(135deg, #ff9fc5, #9fc5ff);
+  color: #333;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.next-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.25);
+}
+
+.next-btn:active {
+  transform: scale(0.96);
+}
 
 
 </style>
@@ -217,6 +242,10 @@ h1, p {
 
 
     <div class="cards" id="cards"></div>
+  <button id="nextBtn" class="next-btn">
+  ➡️ Tovább
+</button>
+
 </div>
 
 <script>
@@ -404,6 +433,15 @@ async function loadAll() {
 
 buildCards();
 loadAll();
+
+  document.getElementById("nextBtn").onclick = () => {
+  if (!userId) {
+    alert("Hiányzó azonosító!");
+    return;
+  }
+
+  window.location.href = `page4.html?id=${encodeURIComponent(userId)}`;
+};
 
 
 </script>
