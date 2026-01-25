@@ -129,7 +129,16 @@ h1, p {
     transform: scale(0.97);
   }
 }
+.card.selected {
+  background: linear-gradient(135deg, #ff9fc5, #9fc5ff);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+  transform: scale(1.03);
+}
 
+.card.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
 </style>
 </head>
 
@@ -184,6 +193,7 @@ const cardsData = [
 /* ===== ÁLLAPOT ===== */
 let voteCounts = {};
 let voting = false;
+let selectedOption = null;
 const cardMap = {};
 
 const loadingEl = document.getElementById("loading");
@@ -226,19 +236,29 @@ function updateUI() {
 
     const count = voteCounts[c.id] || 0;
 
-    card.style.opacity = "1";
-
     card.querySelector(".result").innerText =
       `Szavazat: ${count} db`;
+
+    card.classList.remove("selected", "disabled");
+
+    if (selectedOption) {
+      if (c.id === selectedOption) {
+        card.classList.add("selected");
+      } else {
+        card.classList.add("disabled");
+      }
+    }
   });
 }
 
 
-
 /* ===== SZAVAZÁS ===== */
 async function vote(optionId) {
-  if (voting) return;
-  voting = true;
+  if (voting || selectedOption) return;
+voting = true;
+
+selectedOption = optionId;
+
 
   voteCounts[optionId] = (voteCounts[optionId] || 0) + 1;
   updateUI();
