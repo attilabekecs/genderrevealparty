@@ -129,8 +129,8 @@ const cardsData = [
 ];
 
 /* ===== ÁLLAPOT ===== */
-let selectedVotes = {};
 let voteCounts = {};
+let voting = false;
 const cardMap = {};
 
 /* ===== CSEMPÉK LÉTREHOZÁSA (EGYSZER) ===== */
@@ -173,11 +173,12 @@ function updateUI() {
 
 /* ===== SZAVAZÁS ===== */
 async function vote(optionId) {
-  // 1️⃣ AZONNALI UI frissítés (optimistic)
+  if (voting) return;
+  voting = true;
+
   voteCounts[optionId] = (voteCounts[optionId] || 0) + 1;
   updateUI();
 
-  // 2️⃣ háttérben mentés
   try {
     await fetch(API_URL, {
       method: "POST",
@@ -187,28 +188,14 @@ async function vote(optionId) {
       })
     });
 
-    // 3️⃣ csendes visszaszinkron 1 mp múlva
     setTimeout(loadCounts, 1000);
 
-  } catch (e) {
-    console.error("Save failed", e);
+  } finally {
+    voting = false;
   }
 }
 
 /* ===== ADAT BETÖLTÉS ===== */
-async function loadVotes() {
-  try {
-    const res = await fetch(API_URL + "?id=" + userId + "&mode=votes");
-    const data = await res.json();
-
-    if (data && !data.error) {
-      selectedVotes = data;
-    }
-  } catch (err) {
-    console.error("Vote load error:", err);
-  }
-}
-
 async function loadCounts() {
   try {
     const res = await fetch(API_URL + "?mode=counts");
@@ -221,9 +208,9 @@ async function loadCounts() {
   }
 }
 
+
 /* ===== INDÍTÁS ===== */
 async function loadAll() {
-  await loadVotes();
   await loadCounts();
   updateUI();
 }
