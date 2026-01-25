@@ -71,42 +71,61 @@ button {
     <button id="send">Elteszem az időkapszulába</button>
 </div>
 <script>
+function getUserId() {
+  // 1️⃣ URL query (?id=...)
+  const q = new URLSearchParams(window.location.search).get("id");
+  if (q) return q;
+
+  // 2️⃣ URL hash (#id=...)
+  const h = new URLSearchParams(
+    (window.location.hash || "").replace(/^#/, "")
+  ).get("id");
+  if (h) return h;
+
+  // 3️⃣ localStorage fallback
+  const ls = localStorage.getItem("userId");
+  if (ls) return ls;
+
+  return null;
+}
+
 document.getElementById("send").onclick = async () => {
-    const text = document.getElementById("message").value.trim();
-    const params = new URLSearchParams(window.location.search);
-const userId = params.get("id");
+  const text = document.getElementById("message").value.trim();
+  const userId = getUserId();
 
-    if (!text) {
-        alert("Kérlek, írj egy üzenetet.");
-        return;
-    }
+  if (!text) {
+    alert("Kérlek, írj egy üzenetet.");
+    return;
+  }
 
-    if (!userId) {
-        alert("Hiányzó azonosító.");
-        return;
-    }
+  if (!userId) {
+    alert("Hiányzó azonosító.");
+    return;
+  }
 
-    try {
-        await fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                id: userId,
-                message: text,
-                targetColumn: "W"
-            })
-        });
+  // 🔐 eltesszük, hogy később is biztos meglegyen
+  localStorage.setItem("userId", userId);
 
-        document.getElementById("message").value = "";
-        alert("💖 Az üzenetet elraktuk az időkapszulába.");
+  try {
+    await fetch(window.APP_CONFIG.API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: userId,
+        message: text
+      })
+    });
 
-    } catch (err) {
-        alert("Hiba történt az elküldés során.");
-        console.error(err);
-    }
+    document.getElementById("message").value = "";
+    alert("💖 Az üzenetet elraktuk az időkapszulába.");
+
+  } catch (err) {
+    console.error(err);
+    alert("Hiba történt az elküldés során.");
+  }
 };
 </script>
 
