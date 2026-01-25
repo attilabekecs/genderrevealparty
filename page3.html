@@ -134,6 +134,11 @@ h1, p {
   box-shadow: 0 12px 30px rgba(0,0,0,0.28);
   transform: scale(1.03);
 }
+.cards.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 
 </style>
 <script src="./config.js"></script>
@@ -152,11 +157,32 @@ h1, p {
 ">
   ⏳ Szavazatok betöltése…
 </div>
+<div id="status" style="
+  text-align:center;
+  font-size:15px;
+  color:#555;
+  margin-top:15px;
+  display:none;
+">
+</div>
+
 
     <div class="cards" id="cards"></div>
 </div>
 
 <script>
+const statusEl = document.getElementById("status");
+const cardsContainer = document.getElementById("cards");
+
+function showStatus(text) {
+  statusEl.innerText = text;
+  statusEl.style.display = "block";
+}
+
+function hideStatus() {
+  statusEl.style.display = "none";
+}
+
 const API_URL = window.APP_CONFIG.API_URL;
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -248,13 +274,16 @@ if (selectedOptions.has(c.id)) {
 /* ===== SZAVAZÁS ===== */
 async function vote(optionId) {
   if (voting || selectedOptions.has(optionId)) return;
-voting = true;
 
-selectedOptions.add(optionId);
+  voting = true;
+  cardsContainer.classList.add("disabled");
+  showStatus("⏳ Szavazat elküldése, kérlek várj…");
+
+  selectedOptions.add(optionId);
   localStorage.setItem(
-  "selectedVotes_" + userId,
-  JSON.stringify([...selectedOptions])
-);
+    "selectedVotes_" + userId,
+    JSON.stringify([...selectedOptions])
+  );
 
   voteCounts[optionId] = (voteCounts[optionId] || 0) + 1;
   updateUI();
@@ -268,18 +297,25 @@ selectedOptions.add(optionId);
       })
     });
 
-    setTimeout(async () => {
-  showLoading("🔄 Frissítés…");
-  await loadCounts();
-  updateUI();
-  hideLoading();
-}, 1000);
+    showStatus("🔄 Szavazatok frissítése…");
 
+    await loadCounts();
+    updateUI();
 
+    showStatus("✅ Szavazat rögzítve! Választhatsz másik csempét 😊");
+
+    setTimeout(() => {
+      hideStatus();
+    }, 2500);
+
+  } catch (err) {
+    showStatus("⚠️ Hiba történt, próbáld újra!");
   } finally {
     voting = false;
+    cardsContainer.classList.remove("disabled");
   }
 }
+
 
 /* ===== ADAT BETÖLTÉS ===== */
 
