@@ -142,8 +142,7 @@ canvas {
         position: absolute;
     }
     .counts {
-        margin-top: 12px;  
-        margin-bottom: 16px;
+        margin: 8px 0;
     }
     .box {
     overflow: hidden;   /* 🔥 SEMELYIK BOX nem scroll */
@@ -152,7 +151,7 @@ canvas {
 
 body {
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: hidden;
     overscroll-behavior-y: auto;
 }
 
@@ -162,11 +161,11 @@ body {
         align-items: flex-start;   /* ⬅ felülre */
         justify-content: center;
         width: 100vw;
-        height: 100vh;
+        height: 100%;
         padding: 16px; /* 🔥 ettől látszik a háttér körben */
     }
     input {
-    margin: 12px 0;           /* 🔥 kisebb */
+    margin: 8px 0;           /* 🔥 kisebb */
   }
     .balloons {
     margin-bottom: 32px;
@@ -208,7 +207,7 @@ body {
     .mobile-buttons {
         display: flex;
         gap: 16px;
-        margin-top: 0px;
+        margin-top: 8px;
         margin-bottom: 0px;
         flex-shrink: 0;
     }
