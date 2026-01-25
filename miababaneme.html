@@ -151,7 +151,7 @@ body {
     height: auto;
     min-height: 100vh;
     overflow-y: auto;
-    overscroll-behavior-y: contain;
+    overscroll-behavior-y: auto;
 }
 
 
@@ -173,8 +173,9 @@ body {
     padding: 24px;
     justify-content: flex-start;
     display: flex;
+    overflow: hidden;
     flex-direction: column;
-    overflow-y: auto;   /* ✅ belső scroll */
+    
     gap: 12px;   /* 🔥 ez nagyon fontos */
 }
 
@@ -312,10 +313,7 @@ body {
   </div>
 
   <!-- ✅ MOBIL GOMBOK -->
-  <div class="mobile-buttons">
-    <button onclick="openTips('girl')">💗 Lány tippek</button>
-    <button onclick="openTips('boy')">💙 Fiú tippek</button>
-  </div>
+ 
 
   <!-- ✅ SZÁMLÁLÓK -->
   <div class="counts">
@@ -329,6 +327,11 @@ body {
     <p id="mobileLoading" class="mobile-loading">
       ⏳ Pillanat… betöltődnek a tippjeitek!
     </p>
+
+     <div class="mobile-buttons">
+    <button onclick="openTips('girl')">💗 Lány tippek</button>
+    <button onclick="openTips('boy')">💙 Fiú tippek</button>
+  </div>
   </div>
 
   <p id="message"></p>
