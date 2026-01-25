@@ -186,13 +186,14 @@ async function vote(optionId) {
         vote: optionId
       })
     });
+
+    // 3️⃣ csendes visszaszinkron 1 mp múlva
+    setTimeout(loadCounts, 1000);
+
   } catch (e) {
     console.error("Save failed", e);
   }
 }
-setTimeout(loadCounts, 1000);
-
-
 
 /* ===== ADAT BETÖLTÉS ===== */
 async function loadVotes() {
