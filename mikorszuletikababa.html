@@ -230,7 +230,8 @@ button {
   }
 }
 
-</style>
+</style>  
+<script src="./config.js"></script>
 </head>
 
 <body>
@@ -302,8 +303,7 @@ if (!id) {
   alert("Hiányzó azonosító. Kérlek az első oldalon kezdj!");
 }
 
-const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbyWmg0sHPsOW466NQ7hQR3A5PvxObSQJxl0j8NK5DcQuk5Ju0_sW1IFvQP9tcijhFn_/exec";
+const SCRIPT_URL = window.APP_CONFIG.API_URL;
 
 const slider = document.getElementById("slider");
 const datePreview = document.getElementById("datePreview");
