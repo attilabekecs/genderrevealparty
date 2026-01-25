@@ -124,6 +124,10 @@ canvas {
     font-style: italic;
     color: #888;
 }
+    /* MOBIL GOMBOK – ALAP STÍLUS (MEDIA QUERY-N KÍVÜL) */
+.mobile-buttons {
+    display: none;
+}
 
 @media (max-width: 900px) {
     .mobile-loading {
@@ -201,10 +205,7 @@ body {
     }
 }
 
-/* MOBIL GOMBOK – ALAP STÍLUS (MEDIA QUERY-N KÍVÜL) */
-.mobile-buttons {
-    display: none;
-}
+
 
 .mobile-buttons button {
     flex: 1;
@@ -300,35 +301,39 @@ body {
 
     <!-- KÖZÉP -->
    <div class="box center">
-    <h1>🎉 Babaváró buli 🎉</h1>
-    <p>Tippeld meg a baba nemét!</p>
+  <h1>🎉 Babaváró buli 🎉</h1>
+  <p>Tippeld meg a baba nemét!</p>
 
-    <input type="text" id="name" placeholder="Add meg a neved">
+  <input type="text" id="name" placeholder="Add meg a neved">
 
-    <div class="balloons">
-        <div class="balloon pink" onclick="vote('kislány', this)"></div>
-        <div class="balloon blue" onclick="vote('kisfiú', this)"></div>
+  <div class="balloons">
+    <div class="balloon pink" onclick="vote('kislány', this)"></div>
+    <div class="balloon blue" onclick="vote('kisfiú', this)"></div>
+  </div>
+
+  <!-- ✅ MOBIL GOMBOK -->
+  <div class="mobile-buttons">
+    <button onclick="openTips('girl')">💗 Lány tippek</button>
+    <button onclick="openTips('boy')">💙 Fiú tippek</button>
+  </div>
+
+  <!-- ✅ SZÁMLÁLÓK -->
+  <div class="counts">
+    <div class="count pink-text">
+      💗 <span id="girlCount">0</span>
+    </div>
+    <div class="count blue-text">
+      💙 <span id="boyCount">0</span>
     </div>
 
-    <div class="counts">
-        <div class="count pink-text">
-            💗 <span id="girlCount">0</span>
-        </div>
-        <div class="count blue-text">
-            💙 <span id="boyCount">0</span>
-        </div>
+    <p id="mobileLoading" class="mobile-loading">
+      ⏳ Pillanat… betöltődnek a tippjeitek!
+    </p>
+  </div>
 
-        <p id="mobileLoading" class="mobile-loading">
-            ⏳ Pillanat… betöltődnek a tippjeitek!
-        </p>
-    </div>
-        <div class="mobile-buttons">
-        <button onclick="openTips('girl')">💗 Lány tippek</button>
-        <button onclick="openTips('boy')">💙 Fiú tippek</button>
-    </div>
+  <p id="message"></p>
+</div>
 
-    <p id="message"></p>
-    </div>
    
 
 
