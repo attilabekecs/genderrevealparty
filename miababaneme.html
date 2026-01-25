@@ -123,6 +123,7 @@ canvas {
     margin-top: 15px;
     font-style: italic;
     color: #888;
+    min-height: 40px;
 }
     /* MOBIL GOMBOK – ALAP STÍLUS (MEDIA QUERY-N KÍVÜL) */
 .mobile-buttons {
@@ -453,7 +454,11 @@ if (mobileLoading) mobileLoading.style.display = "block";
             document.getElementById("girlCount").innerText = girlCounter;
             document.getElementById("boyCount").innerText = boyCounter;
 
-            if (mobileLoading) mobileLoading.style.display = "none";
+            if (mobileLoading) {
+  mobileLoading.innerText =
+    "👀 Ha kíváncsi vagy a tippekre, kattints a gombokra 👇";
+}
+
         })
         .catch(() => {
             girl.innerHTML = `<li class="loading">😕 Nem sikerült betölteni</li>`;
