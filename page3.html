@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Mire nem lesz idejük a szülőknek?</title>
+<link rel="icon" href="data:image/svg+xml,
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+  <text y='.9em' font-size='90'>👶</text>
+</svg>">
+
 
 <style>
 * { box-sizing: border-box; }
@@ -93,6 +98,15 @@ h1, p {
 </div>
 
 <script>
+const API_URL = "IDE_A_DEPLOY_URL";
+
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get("id");
+
+if (!userId) {
+    alert("Hiányzó azonosító!");
+}
+
 const cardsData = [
     { id: "alvas", label: "Alvás", emoji: "😴" },
     { id: "kave", label: "Nyugodt kávé", emoji: "☕" },
@@ -100,58 +114,61 @@ const cardsData = [
     { id: "sorozat", label: "Sorozatnézés", emoji: "📺" },
     { id: "randi", label: "Randizás", emoji: "💑" },
     { id: "csend", label: "Csend", emoji: "🤫" },
-
     { id: "rend", label: "Rend és tisztaság", emoji: "🧼" },
     { id: "enido", label: "Énidő", emoji: "🎮" },
     { id: "telefon", label: "Telefon nyugodtan", emoji: "📱" },
     { id: "melegkaja", label: "Meleg étel", emoji: "🍽️" },
     { id: "ataludt", label: "Átaludt éjszaka", emoji: "🛌" },
     { id: "zene", label: "Zenehallgatás", emoji: "🎵" },
-
     { id: "mosas", label: "Mosás utolérése", emoji: "🧺" },
     { id: "gondolat", label: "Egybefüggő gondolat", emoji: "🧠" },
-    { id: "nyugodteste", label: "Nyugodt este", emoji: "🕯️" }
+    { id: "nyugodteste", label: "Nyugodt este", emoji: "🕯️" },
+    { id: "sport", label: "Sportolás", emoji: "🏃‍♂️" }
 ];
 
-let votes = JSON.parse(localStorage.getItem("noTimeVotes")) || {};
+async function vote(optionId) {
+    await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            id: userId,
+            vote: optionId
+        })
+    });
 
-// inicializálás
-cardsData.forEach(c => {
-    if (!votes[c.id]) votes[c.id] = 0;
-});
-
-function totalVotes() {
-    return Object.values(votes).reduce((a, b) => a + b, 0);
+    loadVotes();
 }
 
-function render() {
+async function loadVotes() {
+    const res = await fetch(API_URL + "?id=" + userId);
+    const selected = await res.json();
+
+    render(selected);
+}
+
+function render(selected) {
     const container = document.getElementById("cards");
     container.innerHTML = "";
 
-    const total = totalVotes();
-
     cardsData.forEach(c => {
-        const percent = total ? Math.round(votes[c.id] / total * 100) : 0;
+        const active = selected[c.id];
 
         const card = document.createElement("div");
         card.className = "card";
+        card.style.opacity = active ? "1" : "0.6";
+
         card.innerHTML = `
             <div class="emoji">${c.emoji}</div>
             <div class="label">${c.label}</div>
-            <div class="result">${votes[c.id]} szavazat · ${percent}%</div>
+            <div class="result">${active ? "Kiválasztva" : ""}</div>
         `;
 
-        card.onclick = () => {
-            votes[c.id]++;
-            localStorage.setItem("noTimeVotes", JSON.stringify(votes));
-            render();
-        };
-
+        card.onclick = () => vote(c.id);
         container.appendChild(card);
     });
 }
 
-render();
+loadVotes();
 </script>
 
 </body>
