@@ -173,16 +173,25 @@ function updateUI() {
 
 /* ===== SZAVAZÁS ===== */
 async function vote(optionId) {
-  await fetch(API_URL, {
-    method: "POST",
-    body: new URLSearchParams({
-      id: userId,
-      vote: optionId
-    })
-  });
+  // 1️⃣ AZONNALI UI frissítés (optimistic)
+  voteCounts[optionId] = (voteCounts[optionId] || 0) + 1;
+  updateUI();
 
-  await loadAll();
+  // 2️⃣ háttérben mentés
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      body: new URLSearchParams({
+        id: userId,
+        vote: optionId
+      })
+    });
+  } catch (e) {
+    console.error("Save failed", e);
+  }
 }
+setTimeout(loadCounts, 1000);
+
 
 
 /* ===== ADAT BETÖLTÉS ===== */
@@ -211,8 +220,6 @@ async function loadCounts() {
   }
 }
 
-
-/* ===== INDÍTÁS ===== */
 /* ===== INDÍTÁS ===== */
 async function loadAll() {
   await loadVotes();
