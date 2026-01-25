@@ -24,6 +24,7 @@ body {
     width: 100%;
     max-width: 900px;
     min-height: 75vh;
+    gap: 10px;
 
     background: white;
     border-radius: 32px;
@@ -36,14 +37,19 @@ body {
     justify-content: center;
 }
 
+h1, p {
+    text-align: center;
+    width: 100%;
+}
 
 h1 {
-    margin-bottom: 10px;
+    font-size: 42px;
+    margin-bottom: 12px;
 }
 
 p {
-    margin-bottom: 35px;
-    color: #555;
+    font-size: 18px;
+    color: #666;
 }
 
 
@@ -87,33 +93,43 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .time {
-    padding: 10px 18px;
-    border-radius: 999px;
+    padding: 18px 14px;
+    border-radius: 20px;
     border: 1px solid #ddd;
     cursor: pointer;
-    transition: all 0.2s ease;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    background: #fff;
+    transition: all 0.25s ease;
+    min-height: 64px;
 }
+
 
 .time:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .time.active {
     background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
     border-color: transparent;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
 }
 
-
-.time {
-    padding: 10px 16px;
-    border-radius: 999px;
-    border: 1px solid #ccc;
-    cursor: pointer;
-}
-
-.time.active {
-    background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
-    border-color: transparent;
+.times {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 520px;
+    justify-content: center;
 }
 
 button {
