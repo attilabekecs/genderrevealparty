@@ -1,3 +1,3 @@
 window.APP_CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycby5nZ-eXBxt5Sy_2T6G0jmmG-As3PipQVqtnRd55xKU86X0MrPJM9-nqpxSikIqBIKg/exec"
+  API_URL: "https://script.google.com/macros/s/AKfycbxj5bnwbh7zFUgWwLXQSmd2U_JwGZH8q-IBx1kHAVRfzC4LJSbHnU5JAc9aVjf6ryM/exec"
 };
