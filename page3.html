@@ -160,17 +160,15 @@ function updateUI() {
     const card = cardMap[c.id];
     if (!card) return;
 
-    const active = selectedVotes[c.id] === true;
     const count = voteCounts[c.id] || 0;
 
-    card.style.opacity = active ? "1" : "0.6";
+    card.style.opacity = "1";
 
     card.querySelector(".result").innerText =
-      active
-        ? `Kiválasztva · ${count} szavazat`
-        : `Szavazat: ${count} db`;
+      `Szavazat: ${count} db`;
   });
 }
+
 
 
 /* ===== SZAVAZÁS ===== */
