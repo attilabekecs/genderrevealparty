@@ -112,16 +112,24 @@ canvas {
 /* MOBIL */
 @media (max-width: 900px) {
 
+     body {
+        height: auto;
+        min-height: 100vh;
+    }
+
     .wrapper {
         grid-template-columns: 1fr 1fr;
         grid-template-areas:
             "center center"
             "girl boy";
         height: auto;
+        min-height: 100vh;
+        padding-bottom: 40px;
     }
 
     .center {
         grid-area: center;
+        padding-bottom: 20px;
     }
 
     .box:nth-child(1) {
@@ -136,7 +144,7 @@ canvas {
     .counts {
     display: flex;
     justify-content: space-around;
-    margin-top: 150px;      /* távolság a madzagtól */
+    margin-top: 60px;      /* távolság a madzagtól */
     padding-bottom: 20px;  /* levegő a box alja felé */
 }
 
