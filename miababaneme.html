@@ -138,14 +138,17 @@ canvas {
         position: absolute;
     }
 
-    body {
-        height: 100vh;
-        overflow: hidden; /* 🔴 nincs scroll */
-    }
+body {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+}
+
 
   .wrapper {
         display: flex;
-        align-items: center;
+        align-items: flex-start;   /* ⬅ felülre */
         justify-content: center;
         width: 100vw;
         height: 100vh;
@@ -156,13 +159,16 @@ canvas {
 .box.center {
     width: 100%;
     max-width: 500px;
-    max-height: calc(100vh - 32px); /* 🔥 marad háttér felül-alul */
+    max-height: calc(100vh - 32px);
     border-radius: 30px;
     padding: 24px;
+
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+
+    overflow-y: auto;   /* ✅ belső scroll */
 }
+
 
 
 
