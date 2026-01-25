@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="hu">
+<script src="./config.js"></script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -391,9 +392,8 @@ body {
 
 
 <script>
-/* ===== GOOGLE SCRIPT URL ===== */
-const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbyWmg0sHPsOW466NQ7hQR3A5PvxObSQJxl0j8NK5DcQuk5Ju0_sW1IFvQP9tcijhFn_/exec";
+const API_URL = window.APP_CONFIG.API_URL;
+
 
 /* ===== KONFETTI ===== */
 const canvas = document.getElementById("confetti");
@@ -439,7 +439,7 @@ if (mobileLoading) mobileLoading.style.display = "block";
     girl.innerHTML = `<li class="loading">⏳ Pillanat…<br>betöltődnek a tippjeitek!</li>`;
     boy.innerHTML = `<li class="loading">⏳ Pillanat…<br>betöltődnek a tippjeitek!</li>`;
 
-    fetch(SCRIPT_URL)
+    fetch(API_URL)
         .then(r => r.json())
         .then(tips => {
             girl.innerHTML = "";
@@ -503,11 +503,14 @@ function vote(choice, balloon) {
   }, 400);
 
   // 📡 2. ADATKÜLDÉS HÁTTÉRBEN
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ name, choice })
-  })
+  fetch(API_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "text/plain;charset=utf-8"
+  },
+  body: JSON.stringify({ name, choice })
+})
+
   .then(r => r.json())
   .then(res => {
     if (res?.id) {
