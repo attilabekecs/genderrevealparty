@@ -130,6 +130,7 @@ const cardsData = [
 
 /* ===== ÁLLAPOT ===== */
 let selectedVotes = {};
+let voteCounts = {};
 const cardMap = {};
 
 /* ===== CSEMPÉK LÉTREHOZÁSA (EGYSZER) ===== */
@@ -160,26 +161,31 @@ function updateUI() {
     if (!card) return;
 
     const active = selectedVotes[c.id] === true;
+    const count = voteCounts[c.id] || 0;
 
     card.style.opacity = active ? "1" : "0.6";
+
     card.querySelector(".result").innerText =
-      active ? "Kiválasztva" : "Szavazat: 0 db";
+      active
+        ? `Kiválasztva · ${count} szavazat`
+        : `Szavazat: ${count} db`;
   });
 }
+
 
 /* ===== SZAVAZÁS ===== */
 async function vote(optionId) {
   await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+    body: new URLSearchParams({
       id: userId,
       vote: optionId
     })
   });
 
-  loadVotes();
+  await loadAll();
 }
+
 
 /* ===== ADAT BETÖLTÉS ===== */
 async function loadVotes() {
@@ -197,13 +203,32 @@ async function loadVotes() {
   updateUI();
 }
 
+async function loadCounts() {
+  try {
+    const res = await fetch(API_URL + "?mode=counts");
+    const data = await res.json();
+    if (data && !data.error) {
+      voteCounts = data;
+    }
+  } catch (err) {
+    console.error("Counts load error:", err);
+  }
+}
+
+
 /* ===== INDÍTÁS ===== */
-buildCards();   // csempék AZONNAL
-updateUI();     // alap állapot
-loadVotes();    // adat backendről
+/* ===== INDÍTÁS ===== */
+async function loadAll() {
+  await loadVotes();
+  await loadCounts();
+  updateUI();
+}
+
+buildCards();
+loadAll();
+
+
 </script>
-
-
 
 </body>
 </html>
