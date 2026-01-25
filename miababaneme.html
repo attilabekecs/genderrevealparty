@@ -503,29 +503,32 @@ function vote(choice, balloon) {
   }, 400);
 
   // 📡 2. ADATKÜLDÉS HÁTTÉRBEN
-  fetch(API_URL, {
+fetch(API_URL, {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ name, choice })
 })
+.then(async r => {
+  const text = await r.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error("Nem JSON válasz: " + text);
+  }
+})
+.then(res => {
+  if (res.id) {
+    sessionStorage.setItem("voteId", res.id);
+    renderLists();
+  } else {
+    alert(res.message || "Mentési hiba");
+  }
+})
+.catch(err => {
+  console.error(err);
+  alert("API hiba 😕");
+});
 
-
-  .then(r => r.json())
-  .then(res => {
-    if (res?.id) {
-      sessionStorage.setItem("voteId", res.id);
-      renderLists(); // frissítjük a listát, de ez már nem blokkol
-    } else {
-      alert("Hiba történt a mentésnél 😕");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Nem sikerült elmenteni a szavazatot 😕");
-  });
-}
 
 
 /* INIT */
