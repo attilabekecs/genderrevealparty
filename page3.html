@@ -136,6 +136,7 @@ h1, p {
 }
 
 </style>
+<script src="./config.js"></script>
 </head>
 
 <body>
@@ -156,8 +157,7 @@ h1, p {
 </div>
 
 <script>
-const API_URL =
-"https://script.google.com/macros/s/AKfycbyWmg0sHPsOW466NQ7hQR3A5PvxObSQJxl0j8NK5DcQuk5Ju0_sW1IFvQP9tcijhFn_/exec";
+const SCRIPT_URL = window.APP_CONFIG.API_URL;
 
 const urlParams = new URLSearchParams(window.location.search);
 const userId = urlParams.get("id");
