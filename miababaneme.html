@@ -137,6 +137,11 @@ canvas {
     canvas {
         position: absolute;
     }
+    .counts {
+        margin-top: 24px;   /* ❌ 60px helyett */
+        padding-bottom: 0;
+    }
+
 
 body {
     height: auto;
@@ -162,16 +167,16 @@ body {
     max-height: calc(100vh - 32px);
     border-radius: 30px;
     padding: 24px;
-
+    justify-content: flex-start;
     display: flex;
     flex-direction: column;
-
     overflow-y: auto;   /* ✅ belső scroll */
+    gap: 12px;   /* 🔥 ez nagyon fontos */
 }
 
-
-
-
+.box.center input {
+    align-self: center;
+}
 
     .box:nth-child(1) {
         grid-area: girl;
@@ -190,7 +195,9 @@ body {
     .mobile-buttons {
         display: flex;
         gap: 12px;
-        margin-top: 15px;
+        margin-top: 12px;
+        margin-bottom: 8px;
+        flex-shrink: 0;
     }
 }
 
@@ -222,9 +229,8 @@ body {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    margin-top: 60px;      /* távolság a madzagtól */
-    padding-bottom: 20px;  /* levegő a box alja felé */
 }
+
 
 
 .count {
