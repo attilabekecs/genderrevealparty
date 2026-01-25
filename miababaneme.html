@@ -142,8 +142,8 @@ canvas {
         position: absolute;
     }
     .counts {
-        margin-top: 8px;  
-        margin-bottom: 12px;
+        margin-top: 12px;  
+        margin-bottom: 16px;
     }
     .box {
     overflow: hidden;   /* 🔥 SEMELYIK BOX nem scroll */
@@ -159,26 +159,33 @@ body {
 
 
   .wrapper {
-        display: flex;
+        display: block;
         align-items: flex-start;   /* ⬅ felülre */
         justify-content: center;
         width: 100vw;
         height: 100vh;
         padding: 16px; /* 🔥 ettől látszik a háttér körben */
     }
+    input {
+    margin: 12px 0;           /* 🔥 kisebb */
+  }
+    .balloons {
+    margin-top: 16px;         /* 🔥 nem nyomja le túl */
+  }
 
 
 .box.center {
     width: 100%;
     max-width: 500px;
-    max-height: calc(100vh - 32px);
+    min-height: calc(100vh - 32px);
     border-radius: 30px;
     padding: 24px;
     justify-content: flex-start;
     display: flex;
     overflow: hidden;
     flex-direction: column;
-    gap: 6px;   /* 🔥 ez nagyon fontos */
+    gap: 12px;
+    margin: 0 auto;
 }
 
 .box.center input {
