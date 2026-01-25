@@ -129,14 +129,18 @@ button {
 @media (max-width: 600px) {
 
   body {
-    padding: 16px;
+    padding: 0;
+    display: flex;
+    align-items: stretch;
   }
 
   .container {
-    padding: 28px 22px 32px;
-    border-radius: 22px;
-    min-height: auto;
+    flex: 1;
+    border-radius: 0;
+    padding: 24px 20px 32px;
+    box-shadow: none;
   }
+
 
   h1 {
     font-size: 22px;
@@ -174,6 +178,29 @@ button {
     transform: scale(0.97);
   }
 }
+    @media (max-width: 600px) {
+
+  .modal {
+    align-items: flex-end; /* ⬇️ alulról jön fel */
+  }
+
+  .modal-content {
+    max-width: 100%;
+    border-radius: 22px 22px 0 0;
+    padding: 28px 22px 32px;
+    animation: modalUp 0.35s ease;
+  }
+
+  @keyframes modalUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+}
+
 
 </style>
 </head>
