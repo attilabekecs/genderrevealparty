@@ -215,7 +215,7 @@ if (!id) {
 }
 
 const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbxSWYfmaacSgW637VsPQrRcfMnIJMjLfKnLjw2IJHFc102ASleAJYXe3uOLA5PQCfOB/exec";
+"https://script.google.com/macros/s/AKfycby9t7RB7LNxf5GHj5AtIYx5sA0qg5oS42LPri2UO8raj6TkjF7Vz0LLA-aBu1kvUJ6g/exec";
 
 const slider = document.getElementById("slider");
 const datePreview = document.getElementById("datePreview");
@@ -262,18 +262,13 @@ document.getElementById("submit").onclick = () => {
   d.setDate(startDate.getDate() + Number(slider.value));
   const dateText = d.toLocaleDateString("hu-HU");
 
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      id: id,
-      date: dateText,
-      time: selectedTime
-    })
-  });
+ const url = SCRIPT_URL +
+  "?id=" + encodeURIComponent(id) +
+  "&date=" + encodeURIComponent(dateText) +
+  "&time=" + encodeURIComponent(selectedTime);
+
+fetch(url);
+
 
   // gomb tiltása
   document.getElementById("submit").disabled = true;
