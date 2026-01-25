@@ -93,6 +93,14 @@ h1, p {
 <div class="container">
     <h1>😂 Mire nem lesz idejük a szülőknek?</h1>
     <p>Kattints arra, ami szerinted biztosan háttérbe szorul!</p>
+<div id="loading" style="
+  text-align:center;
+  font-size:16px;
+  color:#777;
+  margin-top:30px;
+">
+  ⏳ Szavazatok betöltése…
+</div>
 
     <div class="cards" id="cards"></div>
 </div>
@@ -132,6 +140,17 @@ const cardsData = [
 let voteCounts = {};
 let voting = false;
 const cardMap = {};
+
+const loadingEl = document.getElementById("loading");
+
+function showLoading(text = "⏳ Szavazatok betöltése…") {
+  loadingEl.innerText = text;
+  loadingEl.style.display = "block";
+}
+
+function hideLoading() {
+  loadingEl.style.display = "none";
+}
 
 /* ===== CSEMPÉK LÉTREHOZÁSA (EGYSZER) ===== */
 function buildCards() {
@@ -188,7 +207,13 @@ async function vote(optionId) {
       })
     });
 
-    setTimeout(loadCounts, 1000);
+    setTimeout(async () => {
+  showLoading("🔄 Frissítés…");
+  await loadCounts();
+  updateUI();
+  hideLoading();
+}, 1000);
+
 
   } finally {
     voting = false;
@@ -211,8 +236,10 @@ async function loadCounts() {
 
 /* ===== INDÍTÁS ===== */
 async function loadAll() {
+  showLoading();
   await loadCounts();
   updateUI();
+  hideLoading();
 }
 
 buildCards();
