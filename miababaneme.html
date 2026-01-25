@@ -131,8 +131,6 @@ canvas {
     }
 }
 
-
-
 /* MOBIL */
 @media (max-width: 900px) {
 
@@ -140,25 +138,33 @@ canvas {
         position: absolute;
     }
 
-     body {
-        height: auto;
-        min-height: 100vh;
+    body {
+        height: 100vh;
+        overflow: hidden; /* 🔴 nincs scroll */
     }
 
-    .wrapper {
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-            "center center"
-            "girl boy";
-        height: auto;
-        min-height: 100vh;
-        padding-bottom: 40px;
-    }
+ .wrapper {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+}
+
 
     .center {
-        grid-area: center;
         padding-bottom: 20px;
     }
+
+    .box.center {
+    height: 100vh;
+    width: 100vw;
+    border-radius: 0;
+    overflow: hidden;
+    padding: 20px;
+    padding-bottom: 32px;
+}
+
+
 
     .box:nth-child(1) {
         grid-area: girl;
@@ -167,6 +173,42 @@ canvas {
     .box:nth-child(3) {
         grid-area: boy;
     }
+
+    /* mobilon elrejtjük az oldalsó boxokat */
+    .wrapper > .box:not(.center) {
+        display: none;
+    }
+
+    /* mobilos gombok */
+    .mobile-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 15px;
+    }
+}
+
+/* MOBIL GOMBOK – ALAP STÍLUS (MEDIA QUERY-N KÍVÜL) */
+.mobile-buttons {
+    display: none;
+}
+
+.mobile-buttons button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+}
+
+.mobile-buttons button:first-child {
+    background: #ff69b4;
+}
+
+.mobile-buttons button:last-child {
+    background: #5dade2;
 }
 
     .counts {
@@ -267,9 +309,15 @@ canvas {
             ⏳ Pillanat… betöltődnek a tippjeitek!
         </p>
     </div>
+        <div class="mobile-buttons">
+        <button onclick="openTips('girl')">💗 Lány tippek</button>
+        <button onclick="openTips('boy')">💙 Fiú tippek</button>
+    </div>
 
     <p id="message"></p>
-</div>
+    </div>
+   
+
 
 
     <!-- FIÚ -->
@@ -287,6 +335,14 @@ canvas {
     <button onclick="closePopup()">Tovább</button>
   </div>
 </div>
+    <div id="tipsPopup" class="popup">
+  <div class="popup-content">
+    <h2 id="tipsTitle"></h2>
+    <ul id="tipsContent"></ul>
+    <button onclick="closeTips()">Bezárás</button>
+  </div>
+</div>
+
 
 
 <script>
@@ -446,6 +502,24 @@ function closePopup() {
     "https://attilabekecs.github.io/genderrevealparty/mikorszuletikababa.html?id=" + encodeURIComponent(id);
 }
 
+function openTips(type) {
+    const title = document.getElementById("tipsTitle");
+    const content = document.getElementById("tipsContent");
+
+    title.innerText = type === "girl" ? "💗 Lány tippek" : "💙 Fiú tippek";
+
+    const sourceList = type === "girl"
+        ? document.getElementById("girlList")
+        : document.getElementById("boyList");
+
+    content.innerHTML = sourceList.innerHTML || "<li>Még nincs tipp</li>";
+
+    document.getElementById("tipsPopup").style.display = "flex";
+}
+
+function closeTips() {
+    document.getElementById("tipsPopup").style.display = "none";
+}
 
 
 </script>
