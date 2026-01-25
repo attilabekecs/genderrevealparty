@@ -109,6 +109,14 @@ canvas {
     pointer-events: none;
 }
 
+.loading {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 20px 0;
+}
+
+
 /* MOBIL */
 @media (max-width: 900px) {
 
@@ -294,39 +302,46 @@ function animateConfetti() {
 
 /* ===== LISTÁK BETÖLTÉSE SHEETS-BŐL ===== */
 function renderLists() {
+    const girl = document.getElementById("girlList");
+    const boy = document.getElementById("boyList");
+
+    // ⏳ BETÖLTÉS JELZÉS
+    girl.innerHTML = `<li class="loading">⏳ Pillanat…<br>betöltődnek a tippjeitek!</li>`;
+    boy.innerHTML = `<li class="loading">⏳ Pillanat…<br>betöltődnek a tippjeitek!</li>`;
+
     fetch(SCRIPT_URL)
         .then(r => r.json())
         .then(tips => {
-            const girl = document.getElementById("girlList");
-            const boy = document.getElementById("boyList");
             girl.innerHTML = "";
             boy.innerHTML = "";
 
             let girlCounter = 0;
-let boyCounter = 0;
+            let boyCounter = 0;
 
-tips
-  .filter(t => t.name && t.choice)
-  .forEach(t => {
-    const li = document.createElement("li");
-    li.textContent = t.name;
+            tips
+              .filter(t => t.name && t.choice)
+              .forEach(t => {
+                const li = document.createElement("li");
+                li.textContent = t.name;
 
-    if (t.choice === "kislány") {
-        girl.appendChild(li);
-        girlCounter++;
-    } else if (t.choice === "kisfiú") {
-        boy.appendChild(li);
-        boyCounter++;
-    }
-});
+                if (t.choice === "kislány") {
+                    girl.appendChild(li);
+                    girlCounter++;
+                } else if (t.choice === "kisfiú") {
+                    boy.appendChild(li);
+                    boyCounter++;
+                }
+              });
 
-
-// számlálók frissítése
-document.getElementById("girlCount").innerText = girlCounter;
-document.getElementById("boyCount").innerText = boyCounter;
-
+            document.getElementById("girlCount").innerText = girlCounter;
+            document.getElementById("boyCount").innerText = boyCounter;
+        })
+        .catch(() => {
+            girl.innerHTML = `<li class="loading">😕 Nem sikerült betölteni</li>`;
+            boy.innerHTML = `<li class="loading">😕 Nem sikerült betölteni</li>`;
         });
 }
+
 
 /* ===== SZAVAZÁS ===== */
 function vote(choice, balloon) {
