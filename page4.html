@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Időkapszula a babának</title>
+
+<!-- PDF LIBEK -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #fff1f7, #eef5ff);
+    min-height: 100vh;
+    padding: 30px;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+h1, p {
+    text-align: center;
+    margin-top: 0;
+}
+
+/* FORM */
+.form {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+textarea {
+    resize: none;
+    min-height: 120px;
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+input[type="text"] {
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+/* GOMBOK */
+.buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+button {
+    padding: 14px 34px;
+    border-radius: 999px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff9bd0, #7fbce8);
+    color: white;
+}
+
+/* ÜZENETEK */
+.messages {
+    margin-top: 60px;
+    display: grid;
+    gap: 22px;
+}
+
+.message {
+    background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
+    border-radius: 24px;
+    padding: 22px 26px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.text {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.author {
+    font-size: 13px;
+    color: #444;
+    text-align: right;
+    font-style: italic;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="pdfContent">
+    <h1>🕰️ Időkapszula a babának</h1>
+    <p>
+        Ezek az üzenetek egy szeretettel teli pillanatból születtek.<br>
+        <em>Talán egyszer majd mosolyt csalnak az arcodra.</em>
+    </p>
+
+    <!-- ❌ EZ NEM KERÜL PDF-BE -->
+    <div class="form" data-no-pdf>
+        <textarea id="messageInput"
+            placeholder="Amikor megszülettél, ezt szeretném, ha tudnád…"></textarea>
+
+        <input type="text" id="nameInput" placeholder="Neved (opcionális)">
+
+        <div class="buttons">
+            <button id="submit">Elteszem az időkapszulába</button>
+            <button id="export">PDF mentése</button>
+        </div>
+    </div>
+
+    <!-- ✅ EZ KERÜL PDF-BE -->
+    <div class="messages" id="messages"></div>
+</div>
+
+<script>
+let messages = JSON.parse(localStorage.getItem("timeCapsule")) || [];
+
+const messageInput = document.getElementById("messageInput");
+const nameInput = document.getElementById("nameInput");
+const messagesDiv = document.getElementById("messages");
+
+/* RENDER */
+function render() {
+    messagesDiv.innerHTML = "";
+    messages.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "message";
+        div.innerHTML = `
+            <div class="text">"${m.text}"</div>
+            ${m.name ? `<div class="author">– ${m.name}</div>` : ""}
+        `;
+        messagesDiv.appendChild(div);
+    });
+}
+
+/* ÜZENET MENTÉS */
+document.getElementById("submit").onclick = () => {
+    const text = messageInput.value.trim();
+    const name = nameInput.value.trim();
+
+    if (!text) {
+        alert("Írj egy üzenetet!");
+        return;
+    }
+
+    messages.push({
+        text,
+        name,
+        time: Date.now()
+    });
+
+    localStorage.setItem("timeCapsule", JSON.stringify(messages));
+
+    messageInput.value = "";
+    nameInput.value = "";
+
+    render();
+};
+
+/* PDF EXPORT – FORM ELREJTÉSSEL */
+document.getElementById("export").onclick = async () => {
+    const { jsPDF } = window.jspdf;
+    const content = document.getElementById("pdfContent");
+
+    // PDF-ből kizárt elemek elrejtése
+    const hidden = document.querySelectorAll("[data-no-pdf]");
+    hidden.forEach(el => el.style.display = "none");
+
+    const canvas = await html2canvas(content, {
+        scale: 2,
+        useCORS: true
+    });
+
+    // visszaállítás
+    hidden.forEach(el => el.style.display = "");
+
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pageWidth;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+    }
+
+    pdf.save("idokapszula-a-babanak.pdf");
+};
+
+render();
+</script>
+
+</body>
+</html>
