@@ -143,26 +143,27 @@ canvas {
         overflow: hidden; /* 🔴 nincs scroll */
     }
 
- .wrapper {
-    display: block;
-    width: 100vw;
-    height: 100vh;
-    padding: 0;
-}
-
-
-    .center {
-        padding-bottom: 20px;
+  .wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+        padding: 16px; /* 🔥 ettől látszik a háttér körben */
     }
 
-    .box.center {
-    height: 100vh;
-    width: 100vw;
-    border-radius: 0;
+
+.box.center {
+    width: 100%;
+    max-width: 500px;
+    max-height: calc(100vh - 32px); /* 🔥 marad háttér felül-alul */
+    border-radius: 30px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
-    padding: 20px;
-    padding-bottom: 32px;
 }
+
 
 
 
