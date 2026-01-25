@@ -140,8 +140,18 @@ async function vote(optionId) {
 }
 
 async function loadVotes() {
-    const res = await fetch(API_URL + "?id=" + userId + "&mode=votes");
-    const selected = await res.json();
+    let selected = {};
+
+    try {
+        const res = await fetch(API_URL + "?id=" + userId + "&mode=votes");
+        const data = await res.json();
+
+        if (data && !data.error) {
+            selected = data;
+        }
+    } catch (err) {
+        console.error("Vote load error:", err);
+    }
 
     render(selected);
 }
@@ -151,7 +161,7 @@ function render(selected) {
     container.innerHTML = "";
 
     cardsData.forEach(c => {
-        const active = selected[c.id];
+        const active = selected && selected[c.id];
 
         const card = document.createElement("div");
         card.className = "card";
@@ -168,8 +178,10 @@ function render(selected) {
     });
 }
 
+// 🔥 EZ KÖTELEZŐ
 loadVotes();
 </script>
+
 
 </body>
 </html>
