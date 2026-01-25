@@ -308,41 +308,39 @@ function vote(choice, balloon) {
   const name = nameInput.value.trim();
   if (!name) return alert("Add meg a neved!");
 
+  // 🎉 1. AZONNALI UI VISSZAJELZÉS
+  const color = choice === "kislány" ? "#ff69b4" : "#5dade2";
+
+  balloon.classList.add("pop");
+  createConfetti(color);
+
+  document.getElementById("popupTitle").innerText =
+    choice === "kislány" ? "💗 Kislányra szavaztál!" : "💙 Kisfiúra szavaztál!";
+  document.getElementById("popupText").innerText = `Köszönjük, ${name}!`;
+  document.getElementById("popup").style.display = "flex";
+
+  setTimeout(() => {
+    document.querySelectorAll(".balloon").forEach(b => b.classList.remove("pop"));
+  }, 400);
+
+  // 📡 2. ADATKÜLDÉS HÁTTÉRBEN
   fetch(SCRIPT_URL, {
     method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" }, // 🔑 preflight-mentesebb
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({ name, choice })
   })
   .then(r => r.json())
   .then(res => {
-    if (!res || !res.id) {
-      alert("Hiba: nem érkezett vissza azonosító (id).");
-      return;
+    if (res?.id) {
+      sessionStorage.setItem("voteId", res.id);
+      renderLists(); // frissítjük a listát, de ez már nem blokkol
+    } else {
+      alert("Hiba történt a mentésnél 😕");
     }
-
-    // ✅ ID eltárolása a popup gombhoz
-    sessionStorage.setItem("voteId", res.id);
-
-    // UI effektek
-    renderLists();
-
-    const color = choice === "kislány" ? "#ff69b4" : "#5dade2";
-    balloon.classList.add("pop");
-    createConfetti(color);
-
-    document.getElementById("popupTitle").innerText =
-      choice === "kislány" ? "💗 Kislányra szavaztál!" : "💙 Kisfiúra szavaztál!";
-    document.getElementById("popupText").innerText = `Köszönjük, ${name}!`;
-
-    document.getElementById("popup").style.display = "flex";
-
-    setTimeout(() => {
-      document.querySelectorAll(".balloon").forEach(b => b.classList.remove("pop"));
-    }, 400);
   })
   .catch(err => {
     console.error(err);
-    alert("Hiba történt a mentésnél 😕");
+    alert("Nem sikerült elmenteni a szavazatot 😕");
   });
 }
 
