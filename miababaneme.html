@@ -509,8 +509,12 @@ function vote(choice, balloon) {
   // 📡 2. ADATKÜLDÉS HÁTTÉRBEN
 fetch(API_URL, {
   method: "POST",
-  body: new URLSearchParams({ name, choice })
+  body: new URLSearchParams({
+    name: name,
+    choice: choice
+  })
 })
+
 .then(async r => {
   const text = await r.text();
   try {
