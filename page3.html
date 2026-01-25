@@ -135,10 +135,6 @@ h1, p {
   transform: scale(1.03);
 }
 
-.card.disabled {
-  opacity: 0.45;
-  pointer-events: none;
-}
 </style>
 </head>
 
@@ -193,7 +189,7 @@ const cardsData = [
 /* ===== ÁLLAPOT ===== */
 let voteCounts = {};
 let voting = false;
-let selectedOption = null;
+let selectedOptions = new Set();
 const cardMap = {};
 
 const loadingEl = document.getElementById("loading");
@@ -239,26 +235,26 @@ function updateUI() {
     card.querySelector(".result").innerText =
       `Szavazat: ${count} db`;
 
-    card.classList.remove("selected", "disabled");
+    card.classList.remove("selected");
 
-    if (selectedOption) {
-      if (c.id === selectedOption) {
-        card.classList.add("selected");
-      } else {
-        card.classList.add("disabled");
-      }
-    }
+if (selectedOptions.has(c.id)) {
+  card.classList.add("selected");
+}
+
   });
 }
 
 
 /* ===== SZAVAZÁS ===== */
 async function vote(optionId) {
-  if (voting || selectedOption) return;
+  if (voting || selectedOptions.has(optionId)) return;
 voting = true;
 
-selectedOption = optionId;
-
+selectedOptions.add(optionId);
+  localStorage.setItem(
+  "selectedVotes_" + userId,
+  JSON.stringify([...selectedOptions])
+);
 
   voteCounts[optionId] = (voteCounts[optionId] || 0) + 1;
   updateUI();
@@ -286,6 +282,7 @@ selectedOption = optionId;
 }
 
 /* ===== ADAT BETÖLTÉS ===== */
+
 async function loadCounts() {
   try {
     const res = await fetch(API_URL + "?mode=counts");
@@ -301,11 +298,17 @@ async function loadCounts() {
 
 /* ===== INDÍTÁS ===== */
 async function loadAll() {
+  const saved = localStorage.getItem("selectedVotes_" + userId);
+  if (saved) {
+    selectedOptions = new Set(JSON.parse(saved));
+  }
+
   showLoading();
   await loadCounts();
   updateUI();
   hideLoading();
 }
+
 
 buildCards();
 loadAll();
