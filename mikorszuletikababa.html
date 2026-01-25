@@ -154,13 +154,14 @@ button {
     padding: 0;
   }
 
-  .container {
-    max-width: none;
-    min-height: 100vh;
-    border-radius: 0;
-    padding: 28px 22px 30px;
-    justify-content: flex-start;
-  }
+ .container {
+  max-width: none;
+  height: calc(100vh - 24px);
+  border-radius: 24px;
+  padding: 24px 20px;
+  justify-content: flex-start;
+}
+
 
   h1 {
     font-size: 30px;
@@ -175,6 +176,7 @@ button {
 
   .inputs {
     gap: 28px;
+    flex: 1;
   }
 
   /* ===== SLIDER ===== */
@@ -195,13 +197,13 @@ button {
   /* ===== NAPSZAKOK ===== */
   .times {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 12px;
     max-width: none;
   }
 
   .time {
     font-size: 20px;
-    min-height: 70px;
+    min-height: 64px;
     border-radius: 24px;
   }
 
