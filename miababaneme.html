@@ -110,11 +110,28 @@ canvas {
 
 /* MOBIL */
 @media (max-width: 900px) {
+
     .wrapper {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "center center"
+            "girl boy";
         height: auto;
     }
+
+    .center {
+        grid-area: center;
+    }
+
+    .box:nth-child(1) {
+        grid-area: girl;
+    }
+
+    .box:nth-child(3) {
+        grid-area: boy;
+    }
 }
+
     .counts {
     display: flex;
     justify-content: space-around;
