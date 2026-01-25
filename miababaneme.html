@@ -136,6 +136,10 @@ canvas {
 /* MOBIL */
 @media (max-width: 900px) {
 
+    canvas {
+        position: absolute;
+    }
+
      body {
         height: auto;
         min-height: 100vh;
@@ -418,10 +422,19 @@ function vote(choice, balloon) {
 /* INIT */
 renderLists();
 
-window.onresize = () => {
+function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-};
+}
+
+// csak egyszer, induláskor
+resizeCanvas();
+
+// csak valódi orientációváltáskor
+window.addEventListener("orientationchange", () => {
+    setTimeout(resizeCanvas, 300);
+});
+
 
 function closePopup() {
   const id = sessionStorage.getItem("voteId");
