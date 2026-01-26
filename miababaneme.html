@@ -157,9 +157,11 @@ canvas {
         position: absolute;
     }
     .counts {
-        margin: 8px 0;
+        margin: 4px 0;
     }
-
+      h1 {
+    font-size: clamp(20px, 6vw, 28px);
+  }
 
 body {
     overscroll-behavior-y: auto;
@@ -180,22 +182,26 @@ body {
     .balloons {
     margin-bottom: 32px;
   }
-
+  .balloon {
+    width: clamp(90px, 22vw, 130px);
+    height: clamp(120px, 28vw, 170px);
+  }
 
 .box.center {
     width: 100%;
     max-width: 500px;
+    font-size: clamp(14px, 3.5vw, 18px);
 
     /* 🔑 EZ A KULCS */
     min-height: calc(100dvh - 32px);
     max-height: calc(100dvh - 32px);
 
     border-radius: 30px;
-    padding: 24px;
+    padding: 16px;
 
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 
     margin: 0 auto;
     overflow: hidden;
