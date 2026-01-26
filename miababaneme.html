@@ -192,20 +192,6 @@
       margin-bottom: 32px;
     }
 
-    .box.center {
-      width: 100%;
-      max-width: 500px;
-      min-height: calc(100dvh - 32px);
-      max-height: calc(100dvh - 32px);
-      border-radius: 30px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-
     .box.center input {
       align-self: center;
     }
@@ -310,6 +296,34 @@
     background: linear-gradient(135deg, #ff69b4, #5dade2);
     color: white;
   }
+
+@media (max-width: 900px) {
+  .box.center {
+    width: 100%;
+    max-width: 500px;
+    height: 100dvh;
+    border-radius: 30px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .center-inner {
+    transform: scale(0.9);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 400px) {
+  .center-inner {
+    transform: scale(0.85);
+  }
+}
+
+
 </style>
 
 
@@ -330,41 +344,44 @@
     
 
     <!-- KÖZÉP -->
-   <div class="box center">
-  <h1>🎉 Babaváró buli 🎉</h1>
-  <p>Tippeld meg a baba nemét!</p>
+  <div class="box center">
+  <div class="center-inner">
 
-  <input type="text" id="name" placeholder="Add meg a neved">
+    <h1>🎉 Babaváró buli 🎉</h1>
+    <p>Tippeld meg a baba nemét!</p>
 
-  <div class="balloons">
-    <div class="balloon pink" onclick="vote('kislány', this)"></div>
-    <div class="balloon blue" onclick="vote('kisfiú', this)"></div>
+    <input type="text" id="name" placeholder="Add meg a neved">
+
+    <div class="balloons">
+      <div class="balloon pink" onclick="vote('kislány', this)"></div>
+      <div class="balloon blue" onclick="vote('kisfiú', this)"></div>
+    </div>
+
+    <!-- ✅ SZÁMLÁLÓK -->
+    <div class="counts">
+      <div class="count pink-text">
+        💗 <span id="girlCount">0</span>
+      </div>
+      <div class="count blue-text">
+        💙 <span id="boyCount">0</span>
+      </div>
+
+      <p id="mobileLoading" class="mobile-loading">
+        ⏳ Pillanat… betöltődnek a tippjeitek!
+      </p>
+    </div>
+
+    <!-- ✅ MOBIL GOMBOK -->
+    <div class="mobile-buttons">
+      <button onclick="openTips('girl')">💗 Lány tippek</button>
+      <button onclick="openTips('boy')">💙 Fiú tippek</button>
+    </div>
+
+    <p id="message"></p>
+
   </div>
-
-  <!-- ✅ MOBIL GOMBOK -->
- 
-
-  <!-- ✅ SZÁMLÁLÓK -->
-<div class="counts">
-  <div class="count pink-text">
-    💗 <span id="girlCount">0</span>
-  </div>
-  <div class="count blue-text">
-    💙 <span id="boyCount">0</span>
-  </div>
-
-  <p id="mobileLoading" class="mobile-loading">
-    ⏳ Pillanat… betöltődnek a tippjeitek!
-  </p>
 </div>
 
-<div class="mobile-buttons">
-  <button onclick="openTips('girl')">💗 Lány tippek</button>
-  <button onclick="openTips('boy')">💙 Fiú tippek</button>
-</div>
-       <p id="message"></p>
-
-  </div>
         <!-- FIÚ -->
     <div class="box">
         <h2 style="color:#5dade2">💙 Fiú tippek</h2>
