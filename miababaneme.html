@@ -301,13 +301,11 @@
   .box.center {
     width: 100%;
     max-width: 500px;
-    height: 100dvh;
-    border-radius: 30px;
+    max-height: calc(100svh - 32px);
     padding: 24px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin: 0 auto;
     overflow: hidden;
   }
 
@@ -316,6 +314,7 @@
     transform-origin: top center;
   }
 }
+
 
 @media (max-width: 400px) {
   .center-inner {
