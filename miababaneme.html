@@ -9,7 +9,9 @@
   <text y='.9em' font-size='90'>👶</text>
 </svg>">
 <style>
-* { box-sizing: border-box; }
+  * {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -76,7 +78,9 @@ input {
   transition: transform 0.2s;
 }
 
-.balloon:hover { transform: scale(1.05); }
+.balloon:hover {
+  transform: scale(1.05);
+}
 
 .balloon::after {
   content: "";
@@ -109,8 +113,16 @@ input {
 }
 
 /* LISTÁK */
-ul { list-style: none; padding: 0; margin-top: 15px; }
-li { padding: 10px 0; border-bottom: 1px solid #eee; }
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 15px;
+}
+
+li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
 
 /* KONFETTI */
 canvas {
@@ -156,15 +168,7 @@ canvas {
   }
 
   .counts {
-    margin: 4px 0;
-  }
-
-  .count {
-    font-size: clamp(20px, 6vw, 28px);
-  }
-
-  h1 {
-    font-size: clamp(20px, 6vw, 28px);
+    margin: 8px 0;
   }
 
   body {
@@ -185,12 +189,7 @@ canvas {
   }
 
   .balloons {
-    margin-top: clamp(8px, 3vh, 30px);
-  }
-
-  .balloon {
-    width: clamp(90px, 22vw, 130px);
-    height: clamp(120px, 28vh, 170px);
+    margin-bottom: 32px;
   }
 
   .box.center {
@@ -199,34 +198,32 @@ canvas {
     min-height: calc(100dvh - 32px);
     max-height: calc(100dvh - 32px);
     border-radius: 30px;
-    padding: clamp(14px, 3vh, 24px);
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: clamp(6px, 2vh, 14px);
+    gap: 12px;
     margin: 0 auto;
     overflow: hidden;
   }
 
-  .box.center h1 {
-    font-size: clamp(20px, 6vw, 30px);
-    margin: 0;
-  }
-
-  .box.center p {
-    font-size: clamp(14px, 3.5vw, 16px);
-  }
-
   .box.center input {
     align-self: center;
-    width: min(90%, 360px);
-    padding: clamp(10px, 2.5vh, 14px);
-    font-size: clamp(14px, 3.5vw, 16px);
   }
 
+  .box:nth-child(1) {
+    grid-area: girl;
+  }
+
+  .box:nth-child(3) {
+    grid-area: boy;
+  }
+
+  /* mobilon elrejtjük az oldalsó boxokat */
   .wrapper > .box:not(.center) {
     display: none !important;
   }
 
+  /* mobilos gombok */
   .mobile-buttons {
     display: flex;
     gap: 16px;
@@ -238,10 +235,10 @@ canvas {
 
 .mobile-buttons button {
   flex: 1;
-  padding: clamp(10px, 2.5vh, 14px);
+  padding: 12px;
   border-radius: 14px;
   border: none;
-  font-size: clamp(14px, 3.5vw, 15px);
+  font-size: 15px;
   font-weight: 600;
   color: white;
   cursor: pointer;
@@ -264,11 +261,9 @@ canvas {
   align-items: center;
 }
 
-@media (min-width: 901px) {
-  .count {
-    font-size: 28px;
-    font-weight: 700;
-  }
+.count {
+  font-size: 28px;
+  font-weight: 700;
 }
 
 .pink-text {
@@ -315,8 +310,6 @@ canvas {
   background: linear-gradient(135deg, #ff69b4, #5dade2);
   color: white;
 }
-
-
 </style>
 
 <script src="./config.js"></script>
