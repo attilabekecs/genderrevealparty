@@ -28,7 +28,6 @@
     grid-template-columns: 1fr 1.3fr 1fr;
     gap: 30px;
     width: 100vw;
-    height: 100vh;
     padding: 30px;
   }
 
@@ -175,14 +174,7 @@
       overscroll-behavior-y: auto;
     }
 
-    .wrapper {
-      display: block;
-      align-items: flex-start;
-      justify-content: center;
-      width: 100vw;
-      height: auto;
-      padding: 16px;
-    }
+    
 
     input {
       margin: 8px 0;
@@ -298,13 +290,26 @@
   }
 
 @media (max-width: 900px) {
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .wrapper {
+    height: 100svh;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    padding: 16px;
+    overflow: hidden;
+  }
+
   .box.center {
     width: 100%;
     max-width: 500px;
-    height: 100svh;
-    padding: 20px;
-    padding-top: 32px;
-    margin: 0 auto;
+    height: 100%;
+    padding: 20px 20px 24px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -314,15 +319,18 @@
   .center-inner {
     width: 100%;
   }
-}
 
+  /* oldalsó boxok eltüntetése */
+  .wrapper > .box:not(.center) {
+    display: none !important;
+  }
 
-@media (max-width: 400px) {
-  .center-inner {
-    transform: scale(0.85);
+  .mobile-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
   }
 }
-
 
 </style>
 
