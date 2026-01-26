@@ -508,9 +508,14 @@ if (mobileLoading) mobileLoading.style.display = "block";
             document.getElementById("boyCount").innerText = boyCounter;
 
             if (mobileLoading) {
-  mobileLoading.innerText =
-    "👀 Ha kíváncsi vagy, kattints a gombokra 👇";
+  if (window.innerWidth <= 900) {
+    mobileLoading.innerText =
+      "👀 Ha kíváncsi vagy, kattints a gombokra 👇";
+  } else {
+    mobileLoading.innerText = "";
+  }
 }
+
 
         })
         .catch(() => {
