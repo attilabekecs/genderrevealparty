@@ -8,278 +8,272 @@
 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
   <text y='.9em' font-size='90'>👶</text>
 </svg>">
-
-
-
 <style>
-* { box-sizing: border-box; }
+/* ================== ALAP ================== */
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --ui-scale: 1;
+}
+
+/* csak alacsonyabb mobil kijelzőn zsugorítunk finoman */
+@media (max-width: 900px) {
+  :root {
+    --ui-scale: clamp(0.9, 100dvh / 750, 1);
+  }
+}
 
 body {
-    margin: 0;
-    font-family: "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
-    min-height: 100dvh;
-    overflow-y: auto;          /* 👈 csak itt lehet scroll */
-    overscroll-behavior-y: auto;
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #ffd6e8, #d6e8ff);
+  min-height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
 }
 
-/* TELJES OLDAL */
+/* ================== LAYOUT ================== */
 .wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1.3fr 1fr;
-    gap: 30px;
-    width: 100vw;
-    height: 100vh;
-    padding: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  gap: 30px;
+  width: 100vw;
+  height: 100dvh;
+  padding: 30px;
 }
-    @media (min-width: 901px) {
+
+@media (min-width: 901px) {
   .counts {
     margin-top: 60px;
   }
 }
 
-
-/* BOXOK */
+/* ================== BOXOK ================== */
 .box {
-    background: white;
-    border-radius: 30px;
-    padding: 30px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-    overflow: hidden;
+  background: white;
+  border-radius: 30px;
+  padding: 30px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+  overflow: hidden;
 }
 
-/* KÖZÉP */
 .center {
-    text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
 
+/* ================== INPUT ================== */
 input {
-    padding: 14px;
-    width: 80%;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    margin: 20px 0;
+  padding: 14px;
+  width: 80%;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  margin: 20px 0;
 }
 
-/* LUFI */
+/* ================== LUFI ================== */
 .balloons {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 30px;
 }
 
 .balloon {
-    width: 130px;
-    height: 170px;
-    border-radius: 50% 50% 45% 45%;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.2s;
+  width: 130px;
+  height: 170px;
+  border-radius: 50% 50% 45% 45%;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s;
 }
 
-.balloon:hover { transform: scale(1.05); }
+.balloon:hover {
+  transform: scale(1.05);
+}
 
 .balloon::after {
-    content: "";
-    position: absolute;
-    bottom: -35px;
-    left: 50%;
-    width: 2px;
-    height: 35px;
-    background: #999;
+  content: "";
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  width: 2px;
+  height: 35px;
+  background: #999;
 }
 
 .pink {
-    background: radial-gradient(circle at 30% 30%, #fff, #ff69b4);
+  background: radial-gradient(circle at 30% 30%, #fff, #ff69b4);
 }
 
 .blue {
-    background: radial-gradient(circle at 30% 30%, #fff, #5dade2);
+  background: radial-gradient(circle at 30% 30%, #fff, #5dade2);
 }
 
-/* POP */
+/* ================== POP ================== */
 .pop {
-    animation: pop 0.4s forwards;
+  animation: pop 0.4s forwards;
 }
 
 @keyframes pop {
-    to {
-        transform: scale(2);
-        opacity: 0;
-    }
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
-/* LISTÁK */
-ul { list-style: none; padding: 0; margin-top: 15px; }
-li { padding: 10px 0; border-bottom: 1px solid #eee; }
+/* ================== LISTÁK ================== */
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 15px;
+}
 
-/* KONFETTI */
+li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* ================== KONFETTI ================== */
 canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
 }
 
+/* ================== LOADING ================== */
 .loading {
-    text-align: center;
-    color: #999;
-    font-style: italic;
-    padding: 20px 0;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 20px 0;
 }
 
 .mobile-loading {
-    width: 100%;
-    display: none;
-    text-align: center;
-    margin: 16px 0 0px;
-    font-style: italic;
-    color: #888;
-    min-height: 40px;
+  width: 100%;
+  display: none;
+  text-align: center;
+  margin-top: 16px;
+  font-style: italic;
+  color: #888;
+  min-height: 40px;
 }
-    /* MOBIL GOMBOK – ALAP STÍLUS (MEDIA QUERY-N KÍVÜL) */
+
+/* ================== MOBIL ALAP ================== */
 .mobile-buttons {
-    display: none;
+  display: none;
 }
 
 @media (max-width: 900px) {
-    .mobile-loading {
-        display: block;
-    }
+  .mobile-loading {
+    display: block;
+  }
 }
 
-/* MOBIL */
+/* ================== MOBIL ================== */
 @media (max-width: 900px) {
 
-    canvas {
-        position: absolute;
-    }
-    .counts {
-        margin: 4px 0;
-    }
-  .count {
-  font-size: clamp(20px, 6vw, 28px);
-}
-      h1 {
-    font-size: clamp(20px, 6vw, 28px);
+  canvas {
+    position: absolute;
   }
 
-body {
-    overscroll-behavior-y: auto;
-}
-
+  .counts {
+    margin: 4px 0;
+  }
 
   .wrapper {
-        display: block;
-        align-items: flex-start;   /* ⬅ felülre */
-        justify-content: center;
-        width: 100vw;
-        height: auto;
-        padding: 16px; /* 🔥 ettől látszik a háttér körben */
-    }
-    input {
-    margin: 8px 0;           /* 🔥 kisebb */
-  }
-    .balloons {
-    margin-top: clamp(8px, 3vh, 30px);
-  }
-  .balloon {
-    width: clamp(90px, 22vw, 130px);
-    height: clamp(120px, 28vh, 170px);
+    display: block;
+    width: 100vw;
+    height: auto;
+    padding: 16px;
   }
 
-.box.center {
+  input {
+    margin: 8px 0;
+  }
+
+  .balloons {
+    margin-top: calc(clamp(8px, 3vh, 30px) * var(--ui-scale));
+  }
+
+  .balloon {
+    width: calc(clamp(90px, 22vw, 130px) * var(--ui-scale));
+    height: calc(clamp(120px, 22vh, 170px) * var(--ui-scale));
+  }
+
+  .box.center {
     width: 100%;
     max-width: 500px;
-    font-size: clamp(14px, 3.5vw, 18px);
-
-    /* 🔑 EZ A KULCS */
     min-height: calc(100dvh - 32px);
     max-height: calc(100dvh - 32px);
 
-    border-radius: 30px;
-    padding: clamp(14px, 3vh, 24px);
+    font-size: calc(clamp(14px, 3.5vw, 18px) * var(--ui-scale));
+    padding: calc(clamp(14px, 3vh, 24px) * var(--ui-scale));
+    gap: calc(clamp(6px, 2vh, 14px) * var(--ui-scale));
 
     display: flex;
     flex-direction: column;
-    gap: clamp(6px, 2vh, 14px);
-
     margin: 0 auto;
-    overflow: hidden;
-}
+  }
+
   .box.center h1 {
-  font-size: clamp(20px, 6vw, 30px);
-  margin: 0;
+    font-size: calc(clamp(20px, 6vw, 30px) * var(--ui-scale));
+    margin: 0;
+  }
+
+  .box.center p {
+    font-size: calc(clamp(14px, 3.5vw, 16px) * var(--ui-scale));
+  }
+
+  .box.center input {
+    align-self: center;
+    width: min(90%, 360px);
+    padding: calc(clamp(10px, 2.5vh, 14px) * var(--ui-scale));
+    font-size: calc(clamp(14px, 3.5vw, 16px) * var(--ui-scale));
+  }
+
+  .wrapper > .box:not(.center) {
+    display: none !important;
+  }
+
+  .mobile-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+  }
 }
 
-.box.center p {
-  font-size: clamp(14px, 3.5vw, 16px);
-}
-
-.box.center input {
-  align-self: center;
-  width: min(90%, 360px);
-  padding: clamp(10px, 2.5vh, 14px);
-  font-size: clamp(14px, 3.5vw, 16px);
-}
-
-    .box:nth-child(1) {
-        grid-area: girl;
-    }
-
-    .box:nth-child(3) {
-        grid-area: boy;
-    }
-
-    /* mobilon elrejtjük az oldalsó boxokat */
-    .wrapper > .box:not(.center) {
-        display: none !important;
-    }
-
-    /* mobilos gombok */
-    .mobile-buttons {
-        display: flex;
-        gap: 16px;
-        margin-top: 8px;
-        margin-bottom: 0px;
-        flex-shrink: 0;
-    }
-}
-
-
-
+/* ================== MOBIL GOMBOK ================== */
 .mobile-buttons button {
-    flex: 1;
-    padding: clamp(10px, 2.5vh, 14px);
-    border-radius: 14px;
-    border: none;
-    font-size: clamp(14px, 3.5vw, 15px);
-    font-weight: 600;
-    color: white;
-    cursor: pointer;
-    white-space: nowrap; 
-    text-align: center;
+  flex: 1;
+  padding: calc(clamp(10px, 2.5vh, 14px) * var(--ui-scale));
+  border-radius: 14px;
+  border: none;
+  font-size: calc(clamp(14px, 3.5vw, 15px) * var(--ui-scale));
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
 }
-
 
 .mobile-buttons button:first-child {
-    background: #ff69b4;
+  background: #ff69b4;
 }
 
 .mobile-buttons button:last-child {
-    background: #5dade2;
+  background: #5dade2;
 }
 
-    .counts {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    align-items: center;
+/* ================== SZÁMLÁLÓK ================== */
+.counts {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
 }
-
-
 
 @media (min-width: 901px) {
   .count {
@@ -288,51 +282,56 @@ body {
   }
 }
 
+@media (max-width: 900px) {
+  .count {
+    font-size: calc(clamp(20px, 6vw, 28px) * var(--ui-scale));
+  }
+}
 
 .pink-text {
-    color: #ff69b4;
+  color: #ff69b4;
 }
 
 .blue-text {
-    color: #5dade2;
+  color: #5dade2;
 }
-  /* POPUP */
+
+/* ================== POPUP ================== */
 .popup {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 .popup-content {
-    background: white;
-    padding: 40px;
-    border-radius: 25px;
-    text-align: center;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  background: white;
+  padding: 40px;
+  border-radius: 25px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
 
 .popup-content h2 {
-    margin-top: 0;
-    font-size: 26px;
+  margin-top: 0;
+  font-size: 26px;
 }
 
 .popup-content button {
-    margin-top: 25px;
-    padding: 14px 30px;
-    font-size: 16px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    background: linear-gradient(135deg, #ff69b4, #5dade2);
-    color: white;
+  margin-top: 25px;
+  padding: 14px 30px;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff69b4, #5dade2);
+  color: white;
 }
-
 
 </style>
 <script src="./config.js"></script>
