@@ -342,6 +342,21 @@
     margin-top: 8px;
   }
 }
+  /* Nevek 2 oszlopban (asztali + popup) */
+#girlList,
+#boyList,
+#tipsContent {
+  column-count: 2;
+  column-gap: 24px;
+}
+
+#girlList li,
+#boyList li,
+#tipsContent li {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+
 
 </style>
 
