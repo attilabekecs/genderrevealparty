@@ -23,9 +23,8 @@ body {
   min-height: 100vh;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
-  display: flex;
-  justify-content: center;
 }
+
 
 /* ===== STAGE BASE ===== */
 .stage {
@@ -58,6 +57,10 @@ body {
   .center-tiles{ grid-column:2; }
   .tiles.right{ grid-column:3; }
 
+  .center-tiles{
+    justify-self:start;   /* EZ JAVÍTJA */
+    width:100%;           /* opcionális */
+  }
 }
 
 
@@ -202,6 +205,7 @@ body {
   gap:24px;
   width:min(420px,90vw);
   z-index:2;
+  justify-self:start;
 }
 
 @media (max-width:1024px){
@@ -515,5 +519,6 @@ function sendRSVP(valasz) {
 
 </body>
 </html>
+
 
 
