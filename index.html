@@ -307,6 +307,27 @@ body {
   color:#555;
 }
 
+  /* ===== FLOATING HERO EFFECT ===== */
+@keyframes floatHero {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+@media (min-width:1100px){
+  .center-card{
+    animation:
+      fadeUp .7s ease,
+      floatHero 6s ease-in-out infinite;
+  }
+
+  /* kis különbség a két kártya között */
+  .center-card:nth-child(2){
+    animation-delay: 0s, 2s;
+  }
+}
+
+
 </style>
 </head>
 
@@ -499,3 +520,4 @@ function sendRSVP(valasz) {
 
 </body>
 </html>
+
