@@ -34,37 +34,34 @@ body {
   padding: 40px 20px;
 }
 
-/* ================= DESKTOP GRID ================= */
+/* ===== NEW LAYOUT ===== */
 @media (min-width:1100px){
 
   .stage{
-    display:grid;
-    grid-template-columns: 320px 460px 320px;
-    gap:40px;
-    max-width:1200px;
+    max-width:1100px;
     margin:auto;
-    align-items:start;
   }
 
-  .tiles,
+  /* felső 2 kártya egymás mellett */
   .center-tiles{
-    position:static;
-    transform:none;
-    margin:0;
-    align-self:start;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+    margin-bottom:40px;
+    width:100%;
   }
 
-  .tiles.left{  grid-column:1; }
-  .center-tiles{ grid-column:2; }
-  .tiles.right{ grid-column:3; }
+  /* alsó 2 oszlop */
+  .bottom-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+  }
 
-  .center-tiles{
-    justify-self:start;   /* EZ JAVÍTJA */
-    width:100%;           /* opcionális */
+  .tiles{
+    max-width:none;
   }
 }
-
-
 
 
 /* ================= OLDALSÓ OSZLOPOK ================= */
@@ -345,34 +342,29 @@ body {
 </div>
 <div class="stage">
 
-<!-- KÖZÉPSŐ CSEMPÉK -->
-<div class="center-tiles">
+  <!-- FELSŐ SOR -->
+  <div class="center-tiles">
+    <div class="center-card quiz">
+      <h2>👶 Baba tipp játék</h2>
+      <p>Tippeld meg a baba érkezését és írj egy kedves üzenetet 💕</p>
+      <a href="https://attilabekecs.github.io/genderrevealparty/miababaneme.html" target="_blank" class="center-btn">
+        Kitöltöm a kérdőívet
+      </a>
+    </div>
 
-  <!-- BABÁS TIPP JÁTÉK -->
-  <div class="center-card quiz">
-    <h2>👶 Baba tipp játék</h2>
-    <p>Tippeld meg a baba érkezését és írj egy kedves üzenetet 💕</p>
-
-    <a href="https://attilabekecs.github.io/genderrevealparty/miababaneme.html" target="_blank" class="center-btn">
-      Kitöltöm a kérdőívet
-    </a>
+    <div class="center-card meet">
+      <h2>💻 Online csatlakozás</h2>
+      <p>Ha nem tudsz személyesen jönni, csatlakozz Meet-en 💕</p>
+      <a href="https://meet.google.com/xxx-xxxx-xxx" target="_blank" class="center-btn">
+        Csatlakozás Google Meethez
+      </a>
+    </div>
   </div>
 
-  <!-- ONLINE CSATLAKOZÁS -->
-  <div class="center-card meet">
-    <h2>💻 Online csatlakozás</h2>
-    <p>Ha nem tudsz személyesen jönni, csatlakozz Meet-en 💕</p>
-
-    <a href="https://meet.google.com/xxx-xxxx-xxx" target="_blank" class="center-btn">
-      Csatlakozás Google Meethez
-    </a>
-  </div>
-
-</div>
-
-
-  <!-- BAL OLDAL -->
-<div class="tiles left">
+  <!-- ALSÓ SOR -->
+  <div class="bottom-row">
+    <div class="tiles left">
+   
 
   <div class="info-box rsvp-box">
   <h3>📝 Visszajelzés</h3>
@@ -435,15 +427,10 @@ body {
   <div class="day">vasárnap</div>
   <div class="time">14:00 – 19:00</div>
 </div>
+    </div>
 
-
- 
-
-</div>
-
-
-  <!-- JOBB OLDAL -->
-  <div class="tiles right">
+    <div class="tiles right">
+      
     <div class="info-box location">
       <span class="small">📍 Helyszín</span>
       <a href="https://www.google.com/maps/search/?api=1&query=Kistelek, Kossuth utca 3"
@@ -469,8 +456,10 @@ body {
 
     
   </div>
+    </div>
+  </div>
 
-</div>
+</div> 
 <script>
 function openForm() {
   document.getElementById('formModal').style.display = 'flex';
@@ -520,6 +509,7 @@ function sendRSVP(valasz) {
 
 </body>
 </html>
+
 
 
 
