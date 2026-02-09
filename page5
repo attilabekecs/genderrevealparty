@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Baba neme – Boríték animáció</title>
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#121c3a;
+      --paper:#f7f3ea;
+      --paper2:#efe7d8;
+      --env:#d9c7b2;
+      --env2:#c9b39b;
+      --shadow: rgba(0,0,0,.35);
+      --blue:#2e7bff;
+      --blue2:#7fb6ff;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background: radial-gradient(1200px 700px at 30% 20%, #1b2d6a 0%, var(--bg1) 45%, #050714 100%);
+      color:#fff;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      overflow:hidden;
+    }
+
+    .wrap{
+      width:min(520px, 92vw);
+      text-align:center;
+      position:relative;
+      padding:24px 16px 40px;
+    }
+
+    h1{
+      margin:0 0 12px;
+      font-size:clamp(18px, 3.6vw, 26px);
+      font-weight:750;
+      letter-spacing:.2px;
+      opacity:.95;
+    }
+
+    .hint{
+      margin:0 0 18px;
+      font-size:14px;
+      opacity:.8;
+    }
+
+    .stage{
+      position:relative;
+      height:340px;
+      display:grid;
+      place-items:center;
+      perspective: 1200px;
+    }
+
+    /* Confetti háttér */
+    .confetti{
+      position:absolute; inset:-40px;
+      pointer-events:none;
+      opacity:0;
+      transition:opacity .4s ease;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,.35));
+    }
+    .confetti.on{ opacity:1; }
+    .confetti i{
+      position:absolute;
+      width:10px; height:18px;
+      border-radius:3px;
+      background: linear-gradient(180deg, var(--blue2), var(--blue));
+      animation: fall 1.6s ease-in forwards;
+      transform: translateY(-60px) rotate(0deg);
+      opacity:.95;
+    }
+    @keyframes fall{
+      to{
+        transform: translateY(460px) rotate(220deg);
+        opacity:0;
+      }
+    }
+
+    /* Boríték */
+    .envelope{
+      width: 340px;
+      height: 220px;
+      position:relative;
+      transform-style:preserve-3d;
+      filter: drop-shadow(0 22px 18px var(--shadow));
+    }
+
+    .env-back{
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, var(--env), var(--env2));
+      border-radius:14px;
+      overflow:hidden;
+    }
+
+    /* alsó háromszög (előlap) */
+    .env-front{
+      position:absolute; inset:0;
+      border-radius:14px;
+      overflow:hidden;
+      background: transparent;
+    }
+    .env-front:before{
+      content:"";
+      position:absolute; left:0; right:0; bottom:0; top:0;
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.08));
+    }
+    .env-front .tri{
+      position:absolute; left:0; right:0; bottom:0; top:0;
+      clip-path: polygon(0 45%, 50% 92%, 100% 45%, 100% 100%, 0 100%);
+      background: linear-gradient(180deg, #d7c3ae, #c4ad95);
+    }
+    .env-front .sideL{
+      position:absolute; inset:0;
+      clip-path: polygon(0 45%, 50% 92%, 0 100%);
+      background: linear-gradient(180deg, #d6c2ae, #bfa78f);
+      opacity:.95;
+    }
+    .env-front .sideR{
+      position:absolute; inset:0;
+      clip-path: polygon(100% 45%, 50% 92%, 100% 100%);
+      background: linear-gradient(180deg, #cfbaa5, #b79f87);
+      opacity:.95;
+    }
+
+    /* fedél */
+    .flap{
+      position:absolute;
+      left:0; right:0; top:0;
+      height: 62%;
+      transform-origin: top center;
+      transform: rotateX(0deg);
+      transition: transform 900ms cubic-bezier(.2,.85,.2,1);
+      z-index: 6;
+    }
+    .flap:before{
+      content:"";
+      position:absolute; inset:0;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      background: linear-gradient(180deg, #e2d2c1 0%, #c9b39b 100%);
+    }
+    .seal{
+      position:absolute;
+      left:50%; top:56%;
+      transform: translate(-50%,-50%);
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #a6ccff, #2e7bff 65%, #1d4fb0 100%);
+      box-shadow: 0 10px 14px rgba(0,0,0,.25);
+      display:grid;
+      place-items:center;
+      color:white;
+      font-weight:800;
+      letter-spacing:.5px;
+      font-size:14px;
+    }
+    .seal span{
+      filter: drop-shadow(0 2px 1px rgba(0,0,0,.35));
+    }
+
+    /* Kártya (ami kijön) */
+    .card{
+      position:absolute;
+      left:50%;
+      width: 86%;
+      height: 180px;
+      transform: translateX(-50%) translateY(30px);
+      background: linear-gradient(180deg, var(--paper), var(--paper2));
+      border-radius: 14px;
+      box-shadow: 0 18px 18px rgba(0,0,0,.25);
+      z-index: 2;
+      transition:
+        transform 1000ms cubic-bezier(.2,.9,.2,1),
+        filter 500ms ease;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.35);
+    }
+
+    .card:before{
+      content:"";
+      position:absolute; inset:-40px;
+      background:
+        radial-gradient(12px 12px at 16% 24%, rgba(46,123,255,.22), transparent 60%),
+        radial-gradient(18px 18px at 84% 32%, rgba(46,123,255,.18), transparent 60%),
+        radial-gradient(14px 14px at 42% 78%, rgba(46,123,255,.16), transparent 60%);
+      transform: rotate(12deg);
+    }
+
+    .card-inner{
+      position:relative;
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding:16px;
+    }
+
+    .big{
+      font-size: clamp(34px, 6vw, 56px);
+      font-weight: 950;
+      letter-spacing: 1px;
+      color: var(--blue);
+      text-shadow: 0 2px 0 rgba(255,255,255,.6);
+      opacity:0;
+      transform: translateY(8px) scale(.98);
+      transition: opacity 600ms ease, transform 700ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    .sub{
+      margin-top:10px;
+      font-size: 14px;
+      font-weight: 650;
+      color:#2a2a2a;
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity 600ms ease, transform 700ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    .spark{
+      position:absolute;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg,
+        rgba(46,123,255,.0),
+        rgba(46,123,255,.35),
+        rgba(46,123,255,.0),
+        rgba(46,123,255,.25),
+        rgba(46,123,255,.0)
+      );
+      filter: blur(1px);
+      opacity:0;
+      transform: scale(.7);
+      transition: opacity 600ms ease, transform 900ms cubic-bezier(.2,.9,.2,1);
+      mix-blend-mode:multiply;
+    }
+
+    /* Nyitott állapot */
+    .open .flap{
+      transform: rotateX(165deg);
+    }
+    .open .card{
+      transform: translateX(-50%) translateY(-70px);
+      filter: drop-shadow(0 26px 20px rgba(0,0,0,.28));
+    }
+    .open .big,
+    .open .sub{
+      opacity:1;
+      transform: translateY(0) scale(1);
+    }
+    .open .spark{
+      opacity:1;
+      transform: scale(1);
+    }
+
+    /* Gomb */
+    .btn{
+      margin-top: 18px;
+      border:0;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #4a8dff, #2e7bff);
+      color:#fff;
+      font-weight: 800;
+      letter-spacing:.2px;
+      cursor:pointer;
+      box-shadow: 0 14px 20px rgba(46,123,255,.25);
+      transition: transform .12s ease, filter .2s ease;
+    }
+    .btn:hover{ filter: brightness(1.05); }
+    .btn:active{ transform: translateY(1px) scale(.99); }
+
+    /* kisebb képernyőn */
+    @media (max-width:420px){
+      .envelope{ width: 310px; height: 210px; }
+      .stage{ height: 320px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Babaváró meglepetés</h1>
+    <p class="hint">Kattints a borítékra vagy a gombra 💌</p>
+
+    <div class="stage">
+      <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+      <div class="envelope" id="env" role="button" tabindex="0" aria-label="Boríték kinyitása">
+        <div class="card" id="card">
+          <div class="card-inner">
+            <div class="spark"></div>
+            <div>
+              <div class="big">FIÚ!</div>
+              <div class="sub">💙 A baba neme: fiú</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="env-back"></div>
+
+        <div class="flap">
+          <div class="seal"><span>OPEN</span></div>
+        </div>
+
+        <div class="env-front">
+          <div class="tri"></div>
+          <div class="sideL"></div>
+          <div class="sideR"></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" id="btn">Boríték kinyitása</button>
+  </div>
+
+  <script>
+    const env = document.getElementById('env');
+    const btn = document.getElementById('btn');
+    const confetti = document.getElementById('confetti');
+
+    let opened = false;
+
+    function makeConfetti() {
+      confetti.innerHTML = "";
+      const count = 36;
+      const rect = confetti.getBoundingClientRect();
+
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('i');
+        const x = Math.random() * (rect.width || 600);
+        const delay = Math.random() * 0.35;
+        const dur = 1.2 + Math.random() * 0.8;
+        const rot = (Math.random() * 120) - 60;
+
+        p.style.left = x + "px";
+        p.style.top = (-30 - Math.random() * 120) + "px";
+        p.style.animationDelay = delay + "s";
+        p.style.animationDuration = dur + "s";
+        p.style.transform = `translateY(-60px) rotate(${rot}deg)`;
+        p.style.opacity = 0.8 + Math.random() * 0.2;
+        p.style.width = (8 + Math.random() * 8) + "px";
+        p.style.height = (14 + Math.random() * 16) + "px";
+        confetti.appendChild(p);
+      }
+
+      confetti.classList.add('on');
+      // Később halkuljon el
+      setTimeout(() => confetti.classList.remove('on'), 1700);
+    }
+
+    function openEnvelope() {
+      if (opened) return;
+      opened = true;
+      env.classList.add('open');
+      btn.textContent = "Újraindítás";
+      makeConfetti();
+    }
+
+    function resetEnvelope() {
+      opened = false;
+      env.classList.remove('open');
+      btn.textContent = "Boríték kinyitása";
+      confetti.classList.remove('on');
+      confetti.innerHTML = "";
+    }
+
+    function toggle() {
+      if (!opened) openEnvelope();
+      else resetEnvelope();
+    }
+
+    env.addEventListener('click', toggle);
+    btn.addEventListener('click', toggle);
+
+    env.addEventListener('keydown', (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle();
+      }
+    });
+  </script>
+</body>
+</html>
